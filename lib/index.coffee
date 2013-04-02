@@ -31,7 +31,7 @@ bone.io.route = (source, actions) ->
     for name, action of actions
         socket.on "#{source}:#{name}", action
 
-bone.io.configure (source, options) ->
+bone.io.configure = (source, options) ->
     # Configure this somehow...
 
     
