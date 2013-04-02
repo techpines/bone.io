@@ -18,10 +18,22 @@ app.use(new rack.Rack([
 // listings controller
 app.io.route('listings', {
     search: function(request) {
+        var listMatches = Array()
         console.log('server says hi');
         console.log(request.data);
+        list.forEach(function(simpsonChar) {
+            if((new RegExp(request.data.toLowerCase())).test(simpsonChar.toLowerCase()))
+            {
+               console.log(simpsonChar); 
+
+                listMatches.push(simpsonChar)
+            }
+            
+
+            
+        });
         //request.io.emit('listings:results', ['funky', 'ducky']);
-        request.io.emit('listings:results', list);
+        request.io.emit('listings:results', listMatches);
     },
 });
 
