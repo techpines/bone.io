@@ -6,13 +6,20 @@ bone.view = (selector, options) ->
     events = options.events
     for eventSelector, functionName of events
         # do the bindings
-        eventSelector
+        console.log(functionName)
+        console.log eventSelector
+        #TODO seperate eventSelector so it has the keypress and selector 
+        #$(eventSelector).on "click", "tr", (event) ->
+         #   alert $(this).text()
+
+
     for name, action of options
+        console.log(name)
+        console.log(action)
         continue if name is 'events'
         view[name] = (data) ->
             for element in $(selector)
                 action element, data
-    
     return view
             
 bone.io = {}

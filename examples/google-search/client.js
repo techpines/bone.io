@@ -1,4 +1,5 @@
 
+
 var searchContainer = bone.view('.search-container', {
     refresh: function(root, listings) {
         var $listings;
