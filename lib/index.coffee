@@ -6,7 +6,7 @@ eventSplitter = /^(\S+)\s*(.*)$/
 setupEvent = (eventName, rootSelector, selector, action) ->
 
 bone.view = (selector, options) ->
-    view = {}
+    view = {} 
     events = options.events
     for eventSelector, functionName of events
         continue if functionName is 'events'
@@ -17,6 +17,8 @@ bone.view = (selector, options) ->
             fullSelector = selector
             fullSelector += " #{subSelector}" if subSelector?
             action = options[functionName]
+            #View: [Selector:Action]
+            console.log('View: ['+fullSelector+" : "+eventName+"]");
             $('body').on eventName, fullSelector, (event) ->
                 root = $(fullSelector).parents(selector)[0]
                 action root, event
