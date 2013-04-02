@@ -1,19 +1,23 @@
 
-facts = bone.get('facts')
-    
-$list = bone.view 'ul.facts',
-    refresh: ->
-        @$el.html ''
-        @$el.append('<li>').html fact
+bone.io.configure 'listings',
+    io: 'ws://twitter.com/websockets'
+    localStorage: 'cache'
 
-bone.interface 'input.search',
-    keypress: ->
-        fragment = @$el.val()
-        facts.io.emit 'search', fragment
+
+searchContainer = bone.view '.search-container',
+    refresh: (root, listings) ->
+        $listings = $(root).find('ul.listings')
+        $listings.html ''
+        $('<li>').appendTo($root).html fact
+    search: (root) ->
+        fragment = $(root).find('input.search').val()
+        bone.io.get('listings').emit 'search', fragment
+    events:
+        'keypress input.search': 'search'
+        'click button.search': 'search'
+
+bone.io.route 'listings',
+    results: (results, listings) ->
+        searchContainer.refresh listings
         
-facts.io.route 'facts',
-    results: (facts, meta) ->
-        $list.refresh facts
 
-
-bone.start()
