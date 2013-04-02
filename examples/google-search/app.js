@@ -3,11 +3,11 @@ express = require('express.io')
 app = express().http().io()
 io = app.io
 
-// facts controller
-io.route('facts', {
-    search: function(req) {
-        this.respond([]);
-    }
+// listings controller
+io.route('listings', {
+    search: function(request) {
+        request.io.emit('listings:result', []);
+    },
 });
 
 app.listen(7076);

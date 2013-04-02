@@ -1,23 +1,14 @@
 
-messages = bone.data 'messages'
-session = bone.data 'session'
+chatBox = bone.view '.chat-box',
+    updateChats: (root) ->
 
-bone.router
-    '': (request) ->
-        messages.emit 'grab'
+    sendChat: (root) ->
 
-bone.view 'display',
-    selector: 'ul.display'
-    update: (data) ->
-        @$el.append("<li>#{data}</li>")
+    events:
+        'keypress': 'sendChat'
 
-bone.interface 'chat_input',
-    selector: 'input.chat'
-    click: ->
-        value = @$el.val()
-        messages.emit 'send', value
-        @view.display.update value
+bone.io.route 'messages',
+    new: (message) ->
+        chatBox.updateChats message
 
-messages.incoming
-    new: (data, meta) ->
-        @view.display.update value
+
