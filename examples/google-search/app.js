@@ -17,7 +17,9 @@ app.use(new rack.Rack([
 // listings controller
 app.io.route('listings', {
     search: function(request) {
-        request.io.emit('listings:result', []);
+        console.log('server says hi');
+        console.log(request.data);
+        request.io.emit('listings:results', ['funky', 'ducky']);
     },
 });
 

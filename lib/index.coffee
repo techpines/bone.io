@@ -1,25 +1,33 @@
 
 window.bone = {}
 
+eventSplitter = /^(\S+)\s*(.*)$/
+
+setupEvent = (eventName, rootSelector, selector, action) ->
+
 bone.view = (selector, options) ->
     view = {}
     events = options.events
     for eventSelector, functionName of events
-        # do the bindings
-        console.log(functionName)
-        console.log eventSelector
-        #TODO seperate eventSelector so it has the keypress and selector 
-        #$(eventSelector).on "click", "tr", (event) ->
-         #   alert $(this).text()
-
+        continue if functionName is 'events'
+        do (eventSelector, functionName) ->
+            match = eventSelector.match eventSplitter
+            eventName = match[1]
+            subSelector = match[2]
+            fullSelector = selector
+            fullSelector += " #{subSelector}" if subSelector?
+            action = options[functionName]
+            $('body').on eventName, fullSelector, (event) ->
+                root = $(fullSelector).parents(selector)[0]
+                action root, event
 
     for name, action of options
-        console.log(name)
-        console.log(action)
         continue if name is 'events'
-        view[name] = (data) ->
-            for element in $(selector)
-                action element, data
+        do (name, action) ->
+            view[name] = (data) ->
+                for element in $(selector)
+                    do (element) ->
+                        action element, data
     return view
             
 bone.io = {}
