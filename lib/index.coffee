@@ -20,6 +20,7 @@ bone.view = (selector, options) ->
             #View: [Selector:Action]
             console.log('View: ['+fullSelector+" : "+eventName+"]");
             $ -> $('body').on eventName, fullSelector, (event) ->
+                console.log('Interface: ['+fullSelector+" : "+eventName+"]");
                 root = $(fullSelector).parents(selector)[0]
                 action root, event
 
