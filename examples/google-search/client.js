@@ -1,4 +1,3 @@
-$(function() {
 
 var searchContainer = bone.view('.search-container', {
     refresh: function(root, listings) {
@@ -25,4 +24,3 @@ bone.io.route('listings', {
     }
 });
 
-});
