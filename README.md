@@ -4,13 +4,13 @@ Front end Javascript franework
 
 ## Dependencies
 
-[Jquery ](http://jquery.com/)
-[Socket.io](http://socket.io/)
+* [Jquery ](http://jquery.com/)
+* [Socket.io](http://socket.io/)
 
 In this example we also use:
 
-[Asset-rack](https://github.com/techpines/asset-rack)
-[Express.io](https://github.com/techpines/express.io)
+* [Asset-rack](https://github.com/techpines/asset-rack)
+* [Express.io](https://github.com/techpines/express.io)
 
 ## Simple App Setup
 
