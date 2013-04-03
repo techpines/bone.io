@@ -2,11 +2,12 @@
 window.bone = {}
 
 eventSplitter = /^(\S+)\s*(.*)$/
+slice = Array::slice
 
 setupEvent = (eventName, rootSelector, selector, action) ->
 
 bone.view = (selector, options) ->
-    view = {} 
+    view = {}
     events = options.events
     for eventSelector, functionName of events
         continue if functionName is 'events'
@@ -17,10 +18,8 @@ bone.view = (selector, options) ->
             fullSelector = selector
             fullSelector += " #{subSelector}" if subSelector?
             action = options[functionName]
-            #View: [Selector:Action]
-            console.log('View: ['+fullSelector+" : "+eventName+"]");
             $ -> $('body').on eventName, fullSelector, (event) ->
-                console.log('Interface: ['+fullSelector+" : "+eventName+"]");
+                console.log "Interface: [#{fullSelector}:#{eventName}]", event.currentTarget
                 root = $(fullSelector).parents(selector)[0]
                 action root, event
 
@@ -30,7 +29,8 @@ bone.view = (selector, options) ->
             view[name] = (data) ->
                 for element in $(selector)
                     do (element) ->
-                        action element, data
+                        console.log "View: [#{selector}:#{name}]", element, data
+                        action.call view, element, data
     return view
             
 bone.io = {}
@@ -47,7 +47,9 @@ bone.io.get = (source) ->
 bone.io.route = (source, actions) ->
     socket = bone.io.get(source)
     for name, action of actions
-        socket.on "#{source}:#{name}", action
+        socket.on "#{source}:#{name}", (data) ->
+            console.log "Data-In: [#{source}:#{name}]", data
+            action data
 
 bone.io.configure = (source, options) ->
     # Configure this somehow...
