@@ -1,4 +1,20 @@
 {
     "name": "bone.io",
-    "version": "0.0.2"
+    "version": "0.0.2",
+    "dependencies": {
+        "express.io": "*",
+        "asset-rack": "2.1.0",
+        "grunt-cli" : "*",
+        "grunt-contrib-coffee" : "*"
+
+    },
+
+   "devDependencies": {
+    "grunt-contrib-coffee": "*",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-watch": "*",
+    "grunt": "*",
+    "grunt-cli":"*"
+  }
+
 }

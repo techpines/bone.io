@@ -7,7 +7,7 @@ slice = Array::slice
 setupEvent = (eventName, rootSelector, selector, action) ->
 
 bone.view = (selector, options) ->
-    view = {}
+    view = {} 
     events = options.events
     for eventSelector, functionName of events
         continue if functionName is 'events'
