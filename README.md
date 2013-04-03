@@ -14,7 +14,7 @@ In this example we also use:
 
 ## Simple App Setup
 
-```javascript
+```html
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/bone.io.js"></script>
