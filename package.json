@@ -5,7 +5,8 @@
         "express.io": "*",
         "asset-rack": "2.1.0",
         "grunt-cli" : "*",
-        "grunt-contrib-coffee" : "*"
+        "grunt-contrib-coffee" : "*",
+         "coffee-script": "*"
 
     },
 
@@ -14,7 +15,13 @@
     "grunt-contrib-uglify": "*",
     "grunt-contrib-watch": "*",
     "grunt": "*",
-    "grunt-cli":"*"
+    "grunt-cli":"*",
+    "mocha":"*",
+    "chai":"*"
+  },
+    "scripts": {
+        "test": "./node_modules/mocha/bin/mocha test/test.coffee"
   }
+   
 
 }
