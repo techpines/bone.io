@@ -1,34 +1,7 @@
-express = require("express.io")
-rack = require("asset-rack")
-app = express().http().io()
-list = require("./data")
+app = require('../examples/google-search/app')
 Browser = require 'zombie'
 browser = new Browser(silent: true)
 should = require('chai').should()
-
-app.use new rack.Rack([new rack.StaticAssets(
-  dirname: __dirname
-  urlPrefix: "/"
-), new rack.BrowserifyAsset(
-  filename: "lib/index.coffee"
-  url: "/bone.io.js"
-)])
-
-# listings controller
-app.io.route "listings",
-  search: (request) ->
-    listMatches = []
-    list.forEach (simpsonChar) ->
-      regex = new RegExp(request.data.toLowerCase())
-      listMatches.push simpsonChar  if (regex).test(simpsonChar.toLowerCase())
-    request.io.emit "listings:results", listMatches
-
-app.get "/", (req, res) ->
-  res.redirect "/client.html"
-
-
-
-app.listen 7076
 
 
 describe 'View testing', ->

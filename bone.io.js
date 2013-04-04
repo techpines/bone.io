@@ -31,7 +31,7 @@
 
           console.log("Interface: [" + fullSelector + ":" + eventName + "]", event.currentTarget);
           root = $(fullSelector).parents(selector)[0];
-          return action(root, event);
+          return action.call(view, root, event);
         });
       });
     };

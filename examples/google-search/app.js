@@ -10,7 +10,7 @@ app.use(new rack.Rack([
         urlPrefix: '/'
     }),
     new rack.BrowserifyAsset({
-        filename: '../../lib/index.coffee',
+        filename: 'lib/index.coffee',
         url: '/bone.io.js'
     })
 ]));
@@ -18,7 +18,7 @@ app.use(new rack.Rack([
 // listings controller
 app.io.route('listings', {
     search: function(request) {
-        console.log('this got called');
+
         var listMatches = [];
         list.forEach(function(simpsonChar) {
             regex = new RegExp(request.data.toLowerCase());
@@ -33,5 +33,8 @@ app.io.route('listings', {
 app.get('/', function(req, res) {
     res.redirect('/client.html');
 });
+
+console.log('starting server')
+
 
 app.listen(7076);

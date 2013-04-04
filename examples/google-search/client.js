@@ -1,7 +1,8 @@
 
 var searchContainer = bone.view('.search-container', {
     events: {
-        'keyup input.search': 'search'
+        'keyup input.search': 'search',
+        'click .searchBtn': 'search'
     },
     refresh: function(root, listings) {
         var self = this;
