@@ -10,7 +10,7 @@ app.use(new rack.Rack([
         urlPrefix: '/'
     }),
     new rack.BrowserifyAsset({
-        filename: 'lib/index.coffee',
+        filename: __dirname + '/../../lib/index.coffee',
         url: '/bone.io.js'
     })
 ]));
