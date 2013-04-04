@@ -1,15 +1,17 @@
 should = require('chai').should()
 express = require('express.io')
 rack = require('asset-rack')
-bone = require('../bone.io.js')
+global.window = {}
+global.$ = {}
+require('../bone.io')
 
 
 
 describe 'a bone view', ->
-    app = null
+    app = null 
  
     it "I have no idea what im doing", (done) ->
-        searchContainer = bone.view(".search-container",
+        searchContainer = window.bone.view(".search-container",
           events:
             "keyup input.search": "search"
 
