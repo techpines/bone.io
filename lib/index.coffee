@@ -7,7 +7,7 @@ slice = Array::slice
 setupEvent = (eventName, rootSelector, selector, action) ->
 
 bone.view = (selector, options) ->
-    view = {} 
+    view = {}
     events = options.events
     for eventSelector, functionName of events
         continue if functionName is 'events'
@@ -21,7 +21,7 @@ bone.view = (selector, options) ->
             $ -> $('body').on eventName, fullSelector, (event) ->
                 console.log "Interface: [#{fullSelector}:#{eventName}]", event.currentTarget
                 root = $(fullSelector).parents(selector)[0]
-                action root, event
+                action.call view, root, event
 
     for name, action of options
         continue if name is 'events'
