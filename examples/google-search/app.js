@@ -18,6 +18,7 @@ app.use(new rack.Rack([
 // listings controller
 app.io.route('listings', {
     search: function(request) {
+        console.log('this got called');
         var listMatches = [];
         list.forEach(function(simpsonChar) {
             regex = new RegExp(request.data.toLowerCase());
