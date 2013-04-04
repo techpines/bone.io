@@ -38,3 +38,5 @@ console.log('starting server')
 
 
 app.listen(7076);
+
+module.exports = app;
