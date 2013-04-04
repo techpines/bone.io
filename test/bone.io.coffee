@@ -2,7 +2,7 @@ should = require('chai').should()
 express = require('express.io')
 rack = require('asset-rack')
 global.window = global
-global.$ = {}
+global.$ = ->
 require('../bone.io')
 
 
