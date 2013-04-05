@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/bone.io.js"></script>
+    <script src="client.js"></script>
+
+
+<style>
+body {
+
+
+}
+
+.tweet {
+margin:15px;
+}
+
+.tweet img {
+width:50px;
+height:50px;
+float:left;
+margin:4px;
+}
+
+
+.search-container {
+width:400px;
+height:500px;
+margin:0 auto;
+overflow-y:auto;
+
+}
+
+
+</style>
+
+
+  </head>
+  <body>
+    
+    <div class='search-container' style='' >
+      <h1>Twitter Search</h1>
+      <input type='textbox' class='search' />
+      <button type="button" class='searchBtn'>Search</button>
+      <div  class='tweets'></div>
+    </div>
+</html>
