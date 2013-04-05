@@ -25,7 +25,8 @@ var searchContainer = bone.view('.search-container', {
 
 checkScroll: function() {
 
-console.log('checking')
+console.log('checking');
+
     var $searchContainer = $(root).find('.search-container');
  var triggerPoint = 100; // 100px from the bottom
         if( !this.isLoading && searchContainer.scrollTop + searchContainer.clientHeight + triggerPoint > searchContainer.scrollHeight ) {
@@ -39,7 +40,10 @@ console.log('checking')
 
         var fragment = $(root).find('input.search').val();
         $(root).data('fragment', fragment);
-        bone.io.get('listings').emit('listings:search', fragment);
+        var dataSend = new Object();
+        dataSend.fragment = fragment;
+        dataSend.page= page;
+        bone.io.get('listings').emit('listings:search', dataSend);
 
 },
 
@@ -53,6 +57,7 @@ console.log('checking')
         });
     },
     search: function(root, event) {
+        page = 1
         var $tweets = $(root).find('.tweets');
         $tweets.html('');
         var fragment = $(root).find('input.search').val();
@@ -60,7 +65,10 @@ console.log('checking')
             return searchContainer.refresh([]);
         }
         $(root).data('fragment', fragment);
-        bone.io.get('listings').emit('listings:search', fragment);
+        var dataSend = new Object();
+        dataSend.fragment = fragment;
+        dataSend.page= page;
+        bone.io.get('listings').emit('listings:search', dataSend);
     }
 });
 

@@ -19,15 +19,16 @@ app.use(new rack.Rack([
 app.io.route('listings', {
     search: function(request) {
 
-
-        request.data = request.data.replace(" ","%20");
-        console.log("User searched for:"+request.data)
+        var fragment = request.data.fragment;
+        var page= request.data.page;
+        fragment = fragment.replace(" ","%20");
+        console.log("User searched for:"+fragment)
         //http://search.twitter.com/search.json?q=armastevs
         var http = require('http');
         var options = {
           hostname: 'search.twitter.com',
           port: 80,
-          path: '/search.json?q='+request.data+"&page=1",
+          path: '/search.json?q='+fragment+"&page="+page,
           method: 'GET'
         };
 
