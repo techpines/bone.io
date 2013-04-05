@@ -15,7 +15,7 @@ var searchContainer = bone.view('.search-container', {
         var $tweets = $(root).find('.tweets');
 
         $(".loadMore").remove();
-
+        isLoading = false;
         $.each(tweets, function(index, tweets) {
         var text = self.highlight(tweets.text)
         var prof = "<img src='"+tweets.profile_image_url+"' />"
@@ -50,6 +50,7 @@ console.log('checking');
         var dataSend = new Object();
         dataSend.fragment = fragment;
         dataSend.page= page;
+        isLoading = true;
         bone.io.get('listings').emit('listings:search', dataSend);
 
 },
