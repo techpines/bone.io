@@ -1,10 +1,17 @@
 <html>
   <head>
+<title>Twitter Blast with Bone.io</title>
+
+
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="/bone.io.js"></script>
     <script src="client.js"></script>
+<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
 
+
+<link href="animate.min.css" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
 
 <style>
 body {
@@ -24,11 +31,25 @@ margin:4px;
 }
 
 
+.search {
+margin-left:30px;
+
+}
+
+.hidden {
+  display:none;
+}
+
+.show {
+  display:block;
+}
+
+
 .search-container {
-width:400px;
+width:100%;
 height:700px;
 margin:0 auto;
-overflow-y:scroll;
+
 
 }
 
@@ -38,11 +59,21 @@ overflow-y:scroll;
 
   </head>
   <body>
+
+
+<div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="#">Twitter Blast with Bone.io</a>
+    
+
+  </div>
+</div>
+
     
     <div class='search-container' style='' >
-      <h1>Twitter Search</h1>
-      <input type='textbox' class='search' />
-      <button type="button" class='searchBtn'>Search</button>
+   <input type='textbox' class='search' placeholder='Search Term' />
+      <button type="button" class='btn btn-primary searchBtn'>Search</button>
+      <button type="button" class='btn btn-danger stopBtn'>Stop</button>
       <div  class='tweets'></div>
     </div>
 </html>

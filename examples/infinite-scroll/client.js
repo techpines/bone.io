@@ -1,60 +1,42 @@
 
-isLoading = false;
-page= 1;
+curSearch = null;
+searchTerm = "";
 
+tweetsFoundSoFar = new Array()
 
 var searchContainer = bone.view('.search-container', {
     events: {
-        'keyup input.search': 'search',
-        'click .searchBtn': 'search',
-        'scroll': 'checkScroll',
-        'click .loadMore' : 'loadMoreResults'
+
+        'click .searchBtn': 'newSearch',
+        'click .stopBtn' : 'stopSearch'
+
     },
     refresh: function(root, tweets) {
         var self = this;
         var $tweets = $(root).find('.tweets');
 
-        $(".loadMore").remove();
-        isLoading = false;
         $.each(tweets, function(index, tweets) {
+
+if($.inArray(tweets.id, tweetsFoundSoFar) === -1)
+{
+
         var text = self.highlight(tweets.text)
         var prof = "<img src='"+tweets.profile_image_url+"' />"
         var username = "<h4>"+tweets.from_user+"</h5>"
+setTimeout(function(){
+        $('<div class="tweet">').prependTo($tweets).html(prof+username+text);
+        $('.tweet').addClass('animated fadeInLeft');
+        },Math.floor(Math.random()*3333));
+tweetsFoundSoFar.push(tweets.id)
 
-        $('<div class="tweet">').appendTo($tweets).html(prof+username+text);
+}
+
+
+
 
         });
 
-        $('<div class="loadMore">').appendTo($tweets).html("<button type='button' class='loadMore' >Load More</button>");
-
     },
-
-checkScroll: function(root) {
-
-console.log('checking');
-
-    var $searchContainer = $(root).find('.search-container');
- var triggerPoint = 100; // 100px from the bottom
-        if( !this.isLoading && searchContainer.scrollTop + searchContainer.clientHeight + triggerPoint > searchContainer.scrollHeight ) {
-           // Load next page
-          console.log('load next page')
-          this.loadMoreResults(root);
-        }
-
-}, loadMoreResults: function(root)
-{
-
-        page += 1;
-        var fragment = $(root).find('input.search').val();
-        $(root).data('fragment', fragment);
-        var dataSend = new Object();
-        dataSend.fragment = fragment;
-        dataSend.page= page;
-        isLoading = true;
-        bone.io.get('listings').emit('listings:search', dataSend);
-
-},
-
 
     highlight: function(root, item) {
         var fragment = $(root).data('fragment');
@@ -64,19 +46,34 @@ console.log('checking');
             return '<strong>' + match + '</strong>'
         });
     },
-    search: function(root, event) {
-        page = 1
+    newSearch: function(root, event) {
+
+        clearInterval(curSearch);
+
         var $tweets = $(root).find('.tweets');
-        $tweets.html('');
+        //$tweets.html('');
         var fragment = $(root).find('input.search').val();
         if (fragment.length == 0) {
             return searchContainer.refresh([]);
         }
         $(root).data('fragment', fragment);
-        var dataSend = new Object();
-        dataSend.fragment = fragment;
-        dataSend.page= page;
-        bone.io.get('listings').emit('listings:search', dataSend);
+        console.log('updating search term to:'+ fragment)
+        searchTerm = fragment;
+        curSearch = setInterval(this.updateSearch, 500);
+
+
+      
+    },
+    updateSearch: function() {
+        console.log('checking fot new:'+ searchTerm)
+
+     bone.io.get('listings').emit('listings:search', searchTerm);
+
+
+
+    },
+    stopSearch: function() {
+        clearInterval(curSearch);        
     }
 });
 

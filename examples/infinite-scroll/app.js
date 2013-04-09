@@ -17,15 +17,18 @@ app.use(new rack.Rack([
 // listings controller
 app.io.route('listings', {
     search: function(request) {
-        var fragment = request.data.fragment;
-        var page= request.data.page;
+
+        var fragment = request.data;
+        console.log("searching for:"+fragment)
+
         fragment = fragment.replace(" ","%20");
-        console.log("User searched for:"+fragment)
+
+        //http://search.twitter.com/search.json?q=armastevs
         var http = require('http');
         var options = {
           hostname: 'search.twitter.com',
           port: 80,
-          path: '/search.json?q='+fragment+"&page="+page,
+          path: '/search.json?q='+fragment,
           method: 'GET'
         };
 
@@ -40,13 +43,29 @@ app.io.route('listings', {
 
 
         res.on('end', function(){
+<<<<<<< HEAD
             var tweets = JSON.parse(data);
             tweets= tweets.results;
             request.io.emit('listings:results', tweets);
+=======
+                var tweets = JSON.parse(data);
+                tweets= tweets.results;
+             request.io.emit('listings:results', tweets);
+                
+
+>>>>>>> 9b08468f3ad2993b4b4b55235970fbf43d08112a
         });
         });
+<<<<<<< HEAD
     req.on('error', function(e) {
     console.log('problem with request: ' + e.message);
+=======
+
+
+
+        req.on('error', function(e) {
+  console.log('problem with request: ' + e.message);
+>>>>>>> 9b08468f3ad2993b4b4b55235970fbf43d08112a
 });
 
 // write data to request body
