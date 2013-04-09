@@ -1,11 +1,18 @@
+/* Copyright Brad Carleton, Tech Pines 
+   MIT License
+*/
 (function() {
-  var eventSplitter, setupEvent, slice;
+  var eventSplitter, setupEvent, slice, toString;
 
   window.bone = {};
+
+  bone.log = true;
 
   eventSplitter = /^(\S+)\s*(.*)$/;
 
   slice = Array.prototype.slice;
+
+  toString = Object.prototype.toString;
 
   setupEvent = function(eventName, rootSelector, selector, action) {};
 
@@ -29,7 +36,9 @@
         return $('body').on(eventName, fullSelector, function(event) {
           var root;
 
-          console.log("Interface: [" + fullSelector + ":" + eventName + "]", event.currentTarget);
+          if (bone.log) {
+            console.log("Interface: [" + fullSelector + ":" + eventName + "]", event.currentTarget);
+          }
           root = $(fullSelector).parents(selector)[0];
           return action.call(view, root, event);
         });
@@ -51,7 +60,9 @@
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           element = _ref[_i];
           _results.push((function(element) {
-            console.log("View: [" + selector + ":" + name + "]", element, data);
+            if (bone.log) {
+              console.log("View: [" + selector + ":" + name + "]", element, data);
+            }
             return action.call(view, element, data);
           })(element));
         }
@@ -61,6 +72,10 @@
     for (name in options) {
       action = options[name];
       if (name === 'events') {
+        continue;
+      }
+      if (toString.call(action) !== '[object Function]') {
+        view[name] = action;
         continue;
       }
       _fn1(name, action);
@@ -84,21 +99,46 @@
     return socket;
   };
 
-  bone.io.route = function(source, actions) {
-    var action, name, socket, _results;
+  bone.io.route = function(sourceName, actions) {
+    var action, name, source, _results;
 
-    socket = bone.io.get(source);
+    source = bone.io.get(sourceName);
     _results = [];
     for (name in actions) {
       action = actions[name];
-      _results.push(socket.on("" + source + ":" + name, function(data) {
-        console.log("Data-In: [" + source + ":" + name + "]", data);
-        return action(data);
-      }));
+      _results.push((function(name, action) {
+        return source.socket.on("" + sourceName + ":" + name, function(data) {
+          if (bone.log) {
+            console.log("Data-In: [" + sourceName + ":" + name + "]", data);
+          }
+          return action(data);
+        });
+      })(name, action));
     }
     return _results;
   };
 
-  bone.io.configure = function(source, options) {};
+  bone.io.configure = function(source, options) {
+    var action, name, _i, _len, _ref, _results;
+
+    name = source;
+    source = bone.io.sources[source] = {
+      socket: io.connect()
+    };
+    _ref = options.actions;
+    _results = [];
+    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+      action = _ref[_i];
+      _results.push((function(action) {
+        return source[action] = function(data) {
+          if (bone.log) {
+            console.log("Data-Out: [" + name + ":" + action + "]", data);
+          }
+          return source.socket.emit("" + name + ":" + action, data);
+        };
+      })(action));
+    }
+    return _results;
+  };
 
 }).call(this);
