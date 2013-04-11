@@ -3,14 +3,11 @@ window.bone = {}
 bone.$ = window.$
 require('./history')
 
-
 bone.log = true
 
 eventSplitter = /^(\S+)\s*(.*)$/
 slice = Array::slice
 toString = Object::toString
-
-setupEvent = (eventName, rootSelector, selector, action) ->
 
 bone.view = (selector, options) ->
     view = {}
@@ -49,7 +46,6 @@ bone.view = (selector, options) ->
             if toString.call(action) isnt '[object Function]'
                 view[name] = action
                 continue
-            console.log('do it')
             do (name, action) ->
                 filtered[name] = (data) ->
                     for element in $(selector)
@@ -58,7 +54,6 @@ bone.view = (selector, options) ->
                                 message = "View: [#{selector}:#{name}]"
                                 console.log message, element, data
                             action.call view, element, data
-        console.log(filtered)
         return filtered
     return view
             
@@ -93,4 +88,25 @@ bone.io.configure = (source, options) ->
                 console.log "Data-Out: [#{name}:#{action}]", data if bone.log
                 source.socket.emit "#{name}:#{action}", data
 
+routeToRegex = (route) ->
+    optionalParam = /\((.*?)\)/g
+    namedParam = /(\(\?)?:\w+/g
+    splatParam = /\*\w+/g
+    escapeRegExp = /[\-{}\[\]+?.,\\\^$|#\s]/g
+    route = route.replace(escapeRegExp, "\\$&")
+                 .replace(optionalParam, "(?:$1)?")
+                 .replace(namedParam, (match, optional) ->
+                    (if optional then match else "([^/]+)")
+                 ).replace(splatParam, "(.*?)")
+     new RegExp("^" + route + "$")
     
+bone.router = (options) ->
+    $ ->
+        for route, action of options.routes
+            continue if route is 'routes'
+            route = routeToRegex route
+            bone.history.handlers.push
+                route: route
+                callback: options[action]
+                router: options
+        options.initialize()

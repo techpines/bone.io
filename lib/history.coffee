@@ -132,9 +132,16 @@ class bone.History
     @navigate current  if @iframe
     @loadUrl() or @loadUrl(@getHash())
 
-  loadUrl: ->
-    alert "load up that url my boy"
+  handlers: []
 
+  loadUrl: (fragmentOverride) ->
+    fragment = @fragment = @getFragment(fragmentOverride)
+    for handler in @handlers
+        if handler.route.test fragment
+            if bone.log
+                console.log "Route: [#{handler.route}:#{fragment}]"
+            handler.callback.apply handler.router, [fragment]
+            continue
   
   # Save a fragment into the hash history, or replace the URL state if the
   # 'replace' option is passed. You are responsible for properly URL-encoding
