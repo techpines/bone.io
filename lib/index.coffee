@@ -23,7 +23,14 @@ bone.view = (selector, options) ->
             action = options[functionName]
             $ -> $('body').on eventName, fullSelector, (event) ->
                 console.log "Interface: [#{fullSelector}:#{eventName}]", event.currentTarget if bone.log
-                root = $(fullSelector).parents(selector)[0]
+                root = event.currentTarget
+                console.log root
+                console.log selector
+                console.log fullSelector
+                if $.trim(selector) isnt $.trim(fullSelector)
+                    root = $(fullSelector).parents(selector)[0]
+                console.log root
+                console.log root
                 action.call view, root, event
 
     for name, action of options
