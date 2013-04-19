@@ -1,42 +1,49 @@
 
-var express = require('express.io');
-var rack = require('asset-rack');
-var app = express().http().io();
-var list = require('./data')
+// Grab all of our dependencies
+var express = require('express'),
+    app = express(),
+    server = require('http').createServer(app),
+    io = require('socket.io').listen(server),
+    bone = require('../../lib/server/index'),
+    list = require('./data');
 
-app.use(new rack.Rack([
-    new rack.StaticAssets({
-        dirname: __dirname,
-        urlPrefix: '/'
-    }),
-    new rack.BrowserifyAsset({
-        filename: __dirname + '/../../lib/index.coffee',
-        url: '/bone.io.js'
-    })
-]));
-
-// listings controller
-app.io.route('listings', {
-    search: function(request) {
-
-        var listMatches = [];
-        list.forEach(function(simpsonChar) {
-            regex = new RegExp(request.data.toLowerCase());
-            if((regex).test(simpsonChar.toLowerCase())) {
-                listMatches.push(simpsonChar);
-            }
-        });
-        request.io.emit('listings:results', listMatches);
-    },
+// Configure the listings data source
+// We are using the socket.io server adapter
+bone.io.configure('listings', {
+    adapter: 'socket.io-server',
+    io: io,
+    actions: [
+        'results'
+    ]
 });
 
+// Route incoming data requests
+// for the listings data source
+bone.io.route('listings', {
+
+    // Defines an incoming data route
+    search: function(fragment, context) {
+    
+        // Handles the fragment searching logic
+        var matches = []
+        list.forEach(function(char) {
+           regex = new RegExp(fragment.toLowerCase());
+            if((regex).test(char.toLowerCase())) {
+                matches.push(char);
+            } 
+        });
+        // Calling the results action on the adapter
+        this.results(matches);
+    }
+});
+
+// Server some of our static content.
+app.use('/', express.static(__dirname));
+
+// Make sure the client html gets served
 app.get('/', function(req, res) {
     res.redirect('/client.html');
 });
 
-console.log('starting server')
-
-
-app.listen(7076);
-
-module.exports = app;
+// Listen on a fun port
+server.listen(7076);

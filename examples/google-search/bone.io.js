@@ -1,5 +1,5 @@
 (function() {
-  var eventSplitter, extend, isExplorer, rootStripper, routeStripper, routeToRegex, slice, toString, trailingSlash;
+  var eventSplitter, extend, initView, isExplorer, rootStripper, routeStripper, routeToRegex, slice, toString, trailingSlash;
 
   window.bone = {};
 
@@ -214,6 +214,46 @@
 
   toString = Object.prototype.toString;
 
+  initView = function(root, view, options) {
+    var $root, action, boneView, name, _fn;
+
+    $root = $(root);
+    boneView = {};
+    boneView.data = function() {
+      console.log(arguments);
+      console.log($root);
+      return $root.data.apply($root, arguments);
+    };
+    boneView.$ = function() {
+      return $root.find.apply($root, arguments);
+    };
+    boneView.el = root;
+    boneView.$el = $(root);
+    _fn = function(name, action) {
+      return boneView[name] = function(data) {
+        var message;
+
+        if (bone.log) {
+          message = "View: [" + options.selector + ":" + name + "]";
+          console.log(message, boneView.el, data);
+        }
+        return action.call(boneView, data);
+      };
+    };
+    for (name in options) {
+      action = options[name];
+      if (name === 'events') {
+        continue;
+      }
+      if (toString.call(action) !== '[object Function]') {
+        boneView[name] = action;
+        continue;
+      }
+      _fn(name, action);
+    }
+    return boneView;
+  };
+
   bone.view = function(selector, options) {
     var action, eventSelector, events, functionName, name, view, _fn, _fn1;
 
@@ -232,21 +272,22 @@
       action = options[functionName];
       return $(function() {
         return $('body').on(eventName, fullSelector, function(event) {
-          var root;
+          var boneView, message, root;
 
+          root = $(event.currentTarget).parents(selector)[0];
           if (bone.log) {
-            console.log("Interface: [" + fullSelector + ":" + eventName + "]", event.currentTarget);
+            message = "Interface: [" + fullSelector + ":" + eventName + "]";
+            console.log(message, root);
           }
-          root = event.currentTarget;
-          console.log(root);
-          console.log(selector);
-          console.log(fullSelector);
+          boneView = $(root).data('bone-view');
+          if (boneView == null) {
+            boneView = initView(root, view, options);
+            $(root).data('bone-view', boneView);
+          }
           if ($.trim(selector) !== $.trim(fullSelector)) {
             root = $(fullSelector).parents(selector)[0];
           }
-          console.log(root);
-          console.log(root);
-          return action.call(view, root, event);
+          return action.call(boneView, root, event);
         });
       });
     };
@@ -266,13 +307,18 @@
         for (_i = 0, _len = _ref.length; _i < _len; _i++) {
           element = _ref[_i];
           _results.push((function(element) {
-            var message;
+            var boneView, message;
 
+            boneView = $(element).data('bone-view');
+            if (boneView == null) {
+              boneView = initView(element, view, options);
+              $(element).data('bone-view');
+            }
             if (bone.log) {
               message = "View: [" + selector + ":" + name + "]";
               console.log(message, element, data);
             }
-            return action.call(view, element, data);
+            return action.call(boneView, data);
           })(element));
         }
         return _results;
@@ -289,44 +335,6 @@
       }
       _fn1(name, action);
     }
-    view.filter = function(selector) {
-      var filtered, value, _fn2;
-
-      filtered = {};
-      _fn2 = function(name, action) {
-        return filtered[name] = function(data) {
-          var element, _i, _len, _ref, _results;
-
-          _ref = $(selector);
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            element = _ref[_i];
-            _results.push((function(element) {
-              var message;
-
-              if (bone.log) {
-                message = "View: [" + selector + ":" + name + "]";
-                console.log(message, element, data);
-              }
-              return action.call(view, element, data);
-            })(element));
-          }
-          return _results;
-        };
-      };
-      for (name in options) {
-        value = options[name];
-        if (name === 'events') {
-          continue;
-        }
-        if (toString.call(action) !== '[object Function]') {
-          view[name] = action;
-          continue;
-        }
-        _fn2(name, action);
-      }
-      return filtered;
-    };
     return view;
   };
 

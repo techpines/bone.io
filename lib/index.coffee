@@ -204,6 +204,28 @@ eventSplitter = /^(\S+)\s*(.*)$/
 slice = Array::slice
 toString = Object::toString
 
+initView = (root, view, options) ->
+    $root = $(root)
+    boneView = {}
+    boneView.data = ->
+        $root.data.apply $root, arguments
+    boneView.$ = ->
+        $root.find.apply $root, arguments
+    boneView.el = root
+    boneView.$el = $(root)
+    for name, action of options
+        continue if name is 'events'
+        if toString.call(action) isnt '[object Function]'
+            boneView[name] = action
+            continue
+        do (name, action) ->
+            boneView[name] = (data) ->
+                if bone.log
+                    message = "View: [#{options.selector}:#{name}]"
+                    console.log message, boneView.el, data
+                action.call boneView, data
+    boneView
+
 bone.view = (selector, options) ->
     view = {}
     events = options.events
@@ -217,16 +239,18 @@ bone.view = (selector, options) ->
             fullSelector += " #{subSelector}" if subSelector?
             action = options[functionName]
             $ -> $('body').on eventName, fullSelector, (event) ->
-                console.log "Interface: [#{fullSelector}:#{eventName}]", event.currentTarget if bone.log
-                root = event.currentTarget
-                console.log root
-                console.log selector
-                console.log fullSelector
+                root = $(event.currentTarget).parents(selector)[0]
+                if bone.log
+                    message = "Interface: [#{fullSelector}:#{eventName}]"
+                    console.log message, root
+                boneView = $(root).data 'bone-view'
+                unless boneView?
+                    boneView = initView root, view, options
+                    $(root).data 'bone-view', boneView
+
                 if $.trim(selector) isnt $.trim(fullSelector)
                     root = $(fullSelector).parents(selector)[0]
-                console.log root
-                console.log root
-                action.call view, root, event
+                action.call boneView, root, event
 
     for name, action of options
         continue if name is 'events'
@@ -237,26 +261,14 @@ bone.view = (selector, options) ->
             view[name] = (data) ->
                 for element in $(selector)
                     do (element) ->
+                        boneView = $(element).data 'bone-view'
+                        unless boneView?
+                            boneView = initView element, view, options
+                            $(element).data 'bone-view'
                         if bone.log
                             message = "View: [#{selector}:#{name}]"
                             console.log message, element, data
-                        action.call view, element, data
-    view.filter = (selector) ->
-        filtered = {}
-        for name, value of options
-            continue if name is 'events'
-            if toString.call(action) isnt '[object Function]'
-                view[name] = action
-                continue
-            do (name, action) ->
-                filtered[name] = (data) ->
-                    for element in $(selector)
-                        do (element) ->
-                            if bone.log
-                                message = "View: [#{selector}:#{name}]"
-                                console.log message, element, data
-                            action.call view, element, data
-        return filtered
+                        action.call boneView, data
     return view
             
 bone.io = {}

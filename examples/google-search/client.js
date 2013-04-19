@@ -6,7 +6,7 @@ bone.io.configure('listings', {
 });
 
 // Here we are defining a bone.io view
-var searchContainer = bone.view('.search-container', {
+window.searchContainer = bone.view('.search-container', {
 
     // Simple events hash
     events: {
@@ -15,9 +15,10 @@ var searchContainer = bone.view('.search-container', {
     },
 
     // Refresh search results
-    refresh: function(root, listings) {
+    refresh: function(listings) {
         var self = this;
-        var $listings = $(root).find('ul.listings');
+        console.log(self);
+        var $listings = self.$('ul.listings');
         $listings.html('');
         $.each(listings, function(index, listing) {
             $('<li>').appendTo($listings)
@@ -26,8 +27,8 @@ var searchContainer = bone.view('.search-container', {
     },
 
     // Highlight individual entries
-    highlight: function(root, item) {
-        var fragment = $(root).data('fragment');
+    highlight: function(item) {
+        var fragment = this.data('fragment');
         fragment = fragment.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
         regex = new RegExp('(' + fragment + ')', 'ig');
         return item.replace(regex, function ($1, match) {
@@ -41,7 +42,7 @@ var searchContainer = bone.view('.search-container', {
         if (fragment.length == 0) {
             return searchContainer.refresh([]);
         }
-        $(root).data('fragment', fragment);
+        this.data('fragment', fragment);
         bone.io.get('listings').search(fragment);
     }
 });
