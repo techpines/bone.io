@@ -1,28 +1,7 @@
 
-This ain't no meteor man, this is some bone.io
+Realtime browser/server framework
 
 ![bone.io](http://cdn.techpines.io/bone-io-github.png)
-
-# Features
-
-1. Ready for production
-1. Similar api to backbone.js
-1. No more creating and destroying views
-1. Based on websockets, forget ajax
-1. Middleware for everything
-1. Not MVC!
-
-# Philosophy
-
-It's time to take a radically new approach to client side application development.  Frameworks like Bacbone.js, Knockout and others have made great strides in adding the necessary structure to make complex client side applications, but they all have serious problems.
-
-Instead of taking the approach of listening to events.  We decided on a different architecture.  We divide a client side application into 5 separate actions:
-
-* Routes: Client side routes are actions that use HTML5 push state with dropback to hashbang.
-* Data-In: Websocket data travelling to the client.
-* Data-Out: Websocket data travelling to the server.
-* Interface: User/System Generated events.
-* Actions: Events that manipulate the DOM.
 
 # Getting Started
 
@@ -58,7 +37,7 @@ You can install the library with npm:
 npm install bone.io
 ```
 
-On the server side you can just require it:
+On the server you can just require it:
 
 ```js
 var bone = require('bone.io');
@@ -70,31 +49,34 @@ Currently, the only server side component is for IO:
 
 ## Views
 
-A view in bone.io is based on a `selector`.  They are easy to declare, and they take care of two major components of our frontend applications.  Namely handling user generated events like clicks and keyups, and also manipulating the DOM.
+A view in bone.io is based on a `selector`.  They are easy to declare, and they take care of DOM manipulations and user generated events.
 
 ```js
-var MyCoolView = bone.view '.some-awesome-selector', {
-    // This is the events hash, similar to backbone.js
-    // You declaritevly state how user interface events
-    // map to functions of the view.
-    events:
+bone.view.SomeView = bone.view('.some-awesome-selector', {
+
+    // This is the events hash, similar to backbone.js.
+    // You map user interface events to functions of the view.
+    events: {
         'click': 'close'
+    },
+
     // Dom manipulation actions pass
-    // the root dom element and any
-    // data that the caller wishes to pass.
+    // data along as the first argument.
     render: function(data) {
     },
-    // User interface actions are passed
-    // the root dom element and the 
-    // jQuery event object for the action.
+
+    // User interface actions pass
+    // the jquery event and then data.
     close: function(event, data) {
+        this.$el.hide();
     },
-}
+});
 ```
 
-Whenever you call actions you don't need to supply the `root` argument.  This is generated automatically.  You can override the root element by providing your own.
+You might be wondering, how is this different than Backbone.js?  In bone.io the views are based on "selectors".  Every element that matches the selector will exhibit the same behavior.  This works whether there are 3 elements or 10 elements or 0 elements or it switches between all different numbers of elements.  Bone.io just works.  So no more manually creating and destroying views all over the place, and having zombie views ruin your picnics.
 
-The reason for this, is that these actions are not occurring on a single element, they are occurring on every element that matches the selector.  This fact makes the declarative styling very appealing. You don't have to manually manage the creation and deletion of views.
+
+
 
 ## Realtime Data, just say not to Models
 
