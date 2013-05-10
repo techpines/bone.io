@@ -57,7 +57,7 @@ bone.view.SomeView = bone.view('tr.data-row', {
     events: {
         'click .icon': 'open': 
         'click .button.edit': 'edit',
-        'click .button.delete: 'remove'
+        'click .button.delete': 'remove'
     },
 
     remove: function() {
@@ -117,16 +117,68 @@ The main difference is that the router supports the concept of middleware.  Ther
 
 # Support
 
-To use the support feature you need templates.  To set templates for bone, you need to do the following:
+To use supports, you need to set your templates.  To set templates for bone, you need to do the following:
 
 ```js
-bone.templates = templatesObject
-```
-
-Where `templatesObject` should be a javascript object with functions that render html.  There are many ways to create this however the templating language you choose and how you build your templates is outside the scope of bone:
-
-```
 bone.templates = {
-    table: function() { return '<table></table>' }
+    layout: function() { return '<div id="content"></div><div id="sidebar"></div>'},
+    table: function() { return '<table></table>'},
+    list: function(data) { return '<ul><li>Bone.io</li><li>'+data+'</ul>'}
 };
+```
+
+The templating language is up to you, but it must be compiled to javascript functions.
+
+Then you can setup your supports:
+
+```js
+bone.support('body', 'layout');
+bone.support('#content', 'table');
+bone.support('#sidebar', 'list', data);
+```
+
+You should do this within your routes.  Supports are not intended for dynamic data, they are intended to be the static skeleton.
+
+Supports are based on a single DOM element, and they are also smart.  They remove existing DOM elements using jquery `remove` before doing their append.  They also will not render twice by default, this keeps your page from being jerky if you specify a certain sidebar element in several routes but not all of them.
+
+# IO
+
+Input/Output is one of the cool new features of bone.io.  First you have to define an io source:
+
+```js
+var socket = io.connect();
+
+bone.io.Search = bone.io('search', {
+    adapter: 'socket.io',
+    options: {
+        socket: socket
+    },
+    middlware: [
+        bone.io.middleware.session
+    ]
+});
+```
+
+The `adapter` tells bone.io what type of adapter is being used.  Currently only socket.io is supported.  The options object gives options for the adapter.  The `actions` give the names of functions that can be called on the IO object to make server calls.  For the socket.io adapter by default, these will be simple `socket.emit` calls.
+
+You can also use middleware.  Middleware should define two functions `input` and `output`.  To be run for incoming data and outgoing data respectively.
+
+For inbound data routes from the server:
+
+```js
+bone.io.Search.inbound({
+    results: function(data, context) {
+        ...
+    }
+});
+```
+
+You can also define outbound routes explicitly:
+
+```js
+bone.io.Search.outbound({
+    search: function(data, context) {
+        ...
+    }
+});
 ```
