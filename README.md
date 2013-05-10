@@ -1,4 +1,4 @@
-# bone.io
+![bone.io](http://cdn.techpines.io/bone-io-logo.png)
 
 Front-end Javascript framework
 
@@ -28,12 +28,12 @@ var MyCoolView = bone.view '.some-awesome-selector', {
     // Dom manipulation actions pass
     // the root dom element and any
     // data that the caller wishes to pass.
-    render: function(root, data) {
+    render: function(data) {
     },
     // User interface actions are passed
     // the root dom element and the 
     // jQuery event object for the action.
-    close: function(root, event) {
+    close: function(event, data) {
     },
 }
 ```

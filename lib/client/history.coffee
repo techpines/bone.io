@@ -1,21 +1,17 @@
 
-window.bone = {}
-bone.$ = window.$
-
-extend = (obj, source) ->
-  for prop of source
-    obj[prop] = source[prop]
-  obj
-
-
-# Backbone.History
-# ----------------
-
-# Handles cross-browser history management, based on either
+# History.coffee - Handles cross-browser history management, based on either
 # [pushState](http://diveintohtml5.info/history.html) and real URLs, or
 # [onhashchange](https://developer.mozilla.org/en-US/docs/DOM/window.onhashchange)
 # and URL fragments. If the browser supports neither (old IE, natch),
 # falls back to polling.
+
+# Code is mostly borrowed from backbone, so Copyright Backbone.js
+
+# Define an extend function
+extend = (obj, source) ->
+  for prop of source
+    obj[prop] = source[prop]
+  obj
 
 # Cached regex for stripping a leading hash/slash and trailing space.
 routeStripper = /^[#\/]|\s+$/g
@@ -194,133 +190,3 @@ class bone.History
       
       # Some browsers require that `hash` contains a leading #.
       location.hash = "#" + fragment
-
-bone.$ ->
-  bone.history = new bone.History()
-
-bone.log = true
-
-eventSplitter = /^(\S+)\s*(.*)$/
-slice = Array::slice
-toString = Object::toString
-
-initView = (root, view, options) ->
-    $root = $(root)
-    boneView = {}
-    boneView.data = ->
-        $root.data.apply $root, arguments
-    boneView.$ = ->
-        $root.find.apply $root, arguments
-    boneView.el = root
-    boneView.$el = $(root)
-    for name, action of options
-        continue if name is 'events'
-        if toString.call(action) isnt '[object Function]'
-            boneView[name] = action
-            continue
-        do (name, action) ->
-            boneView[name] = (data) ->
-                if bone.log
-                    message = "View: [#{options.selector}:#{name}]"
-                    console.log message, boneView.el, data
-                action.call boneView, data
-    boneView
-
-bone.view = (selector, options) ->
-    view = {}
-    events = options.events
-    for eventSelector, functionName of events
-        continue if functionName is 'events'
-        do (eventSelector, functionName) ->
-            match = eventSelector.match eventSplitter
-            eventName = match[1]
-            subSelector = match[2]
-            fullSelector = selector
-            fullSelector += " #{subSelector}" if subSelector?
-            action = options[functionName]
-            $ -> $('body').on eventName, fullSelector, (event) ->
-                root = $(event.currentTarget).parents(selector)[0]
-                if bone.log
-                    message = "Interface: [#{fullSelector}:#{eventName}]"
-                    console.log message, root
-                boneView = $(root).data 'bone-view'
-                unless boneView?
-                    boneView = initView root, view, options
-                    $(root).data 'bone-view', boneView
-
-                if $.trim(selector) isnt $.trim(fullSelector)
-                    root = $(fullSelector).parents(selector)[0]
-                action.call boneView, root, event
-
-    for name, action of options
-        continue if name is 'events'
-        if toString.call(action) isnt '[object Function]'
-            view[name] = action
-            continue
-        do (name, action) ->
-            view[name] = (data) ->
-                for element in $(selector)
-                    do (element) ->
-                        boneView = $(element).data 'bone-view'
-                        unless boneView?
-                            boneView = initView element, view, options
-                            $(element).data 'bone-view'
-                        if bone.log
-                            message = "View: [#{selector}:#{name}]"
-                            console.log message, element, data
-                        action.call boneView, data
-    return view
-            
-bone.io = {}
-
-bone.io.sources = {}
-
-bone.io.get = (source) ->
-    socket = bone.io.sources[source]
-    return socket if socket?
-    socket = io.connect()
-    bone.io.sources[source] = socket
-    return socket
-
-bone.io.route = (sourceName, actions) ->
-    source = bone.io.get(sourceName)
-    for name, action of actions
-        do (name, action) ->
-            source.socket.on "#{sourceName}:#{name}", (data) ->
-                if bone.log
-                    message = "Data-In: [#{sourceName}:#{name}]"
-                    console.log message, data
-                action data
-
-bone.io.configure = (source, options) ->
-    name = source
-    source = bone.io.sources[source] =
-        socket: io.connect()
-    for action in options.actions
-        do (action) ->
-            source[action] = (data) ->
-                console.log "Data-Out: [#{name}:#{action}]", data if bone.log
-                source.socket.emit "#{name}:#{action}", data
-
-routeToRegex = (route) ->
-    optionalParam = /\((.*?)\)/g
-    namedParam = /(\(\?)?:\w+/g
-    splatParam = /\*\w+/g
-    escapeRegExp = /[\-{}\[\]+?.,\\\^$|#\s]/g
-    route = route.replace(escapeRegExp, "\\$&")
-                 .replace(optionalParam, "(?:$1)?")
-                 .replace(namedParam, (match, optional) ->
-                    (if optional then match else "([^/]+)")
-                 ).replace(splatParam, "(.*?)")
-     new RegExp("^" + route + "$")
-    
-bone.router = (options) ->
-    $ ->
-        for route, action of options.routes
-            continue if route is 'routes'
-            route = routeToRegex route
-            bone.history.handlers.push
-                route: route
-                callback: options[action]
-                router: options
-        options.initialize()

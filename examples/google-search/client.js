@@ -6,6 +6,9 @@ bone.io.configure('listings', {
 });
 
 // Here we are defining a bone.io view
+// The first argument is a CSS selector specifying which
+// elements that this view represents.
+// The second argument is the constructor object.
 window.searchContainer = bone.view('.search-container', {
 
     // Simple events hash
@@ -17,10 +20,17 @@ window.searchContainer = bone.view('.search-container', {
     // Refresh search results
     refresh: function(listings) {
         var self = this;
-        console.log(self);
+
+        // Grab the listings box
         var $listings = self.$('ul.listings');
+    
+        // Empty the listings box
         $listings.html('');
+        
+        // Iterate through then new listings from the server
         $.each(listings, function(index, listing) {
+            
+            // Add the listing to the list.
             $('<li>').appendTo($listings)
                      .html(self.highlight(listing));
         });
