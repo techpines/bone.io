@@ -1,4 +1,4 @@
-![bone.io](http://cdn.techpines.io/bone-io-logo.png)
+![bone.io](http://cdn.techpines.io/bone-io-github.png)
 
 Front-end Javascript framework
 
