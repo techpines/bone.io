@@ -1,6 +1,16 @@
+
+This ain't no meteor man, this is some bone.io
+
 ![bone.io](http://cdn.techpines.io/bone-io-github.png)
 
-Front-end Javascript framework
+# Features
+
+1. Ready for production
+1. Similar api to backbone.js
+1. No more creating and destroying views
+1. Based on websockets, forget ajax
+1. Middleware for everything
+1. Not MVC!
 
 ## You Need Actions not Callbacks
 
