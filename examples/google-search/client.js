@@ -1,15 +1,27 @@
 
-// Configure our data source
-bone.io.configure('listings', {
-    adapter: 'socket.io-client',
-    actions: ['search']
+// Configure our IO source
+bone.io.Listings = bone.io('listings', {
+    adapter: 'socket.io',
+    options: {
+        socket: io.connect()
+    },
+    
+    // Outgoing data route
+    outbound: ['search'],
+
+    // Incoming data route
+    inbound: {
+        results: function(listings) {
+            this.view.SearchContainer.refresh(listings);
+        }
+    }
 });
 
 // Here we are defining a bone.io view
 // The first argument is a CSS selector specifying which
 // elements that this view represents.
 // The second argument is the constructor object.
-window.searchContainer = bone.view('.search-container', {
+bone.view.SearchContainer = bone.view('.search-container', {
 
     // Simple events hash
     events: {
@@ -38,8 +50,7 @@ window.searchContainer = bone.view('.search-container', {
 
     // Highlight individual entries
     highlight: function(item) {
-        var fragment = this.data('fragment');
-        fragment = fragment.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
+        fragment = this.fragment.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
         regex = new RegExp('(' + fragment + ')', 'ig');
         return item.replace(regex, function ($1, match) {
             return '<strong>' + match + '</strong>'
@@ -48,19 +59,10 @@ window.searchContainer = bone.view('.search-container', {
 
     // Triggers a search
     search: function(root, event) {
-        var fragment = $(root).find('input.search').val();
+        this.fragment = $(root).find('input.search').val();
         if (fragment.length == 0) {
-            return searchContainer.refresh([]);
+            return this.refresh([]);
         }
-        this.data('fragment', fragment);
-        bone.io.get('listings').search(fragment);
+        this.io.Listings.search(fragment);
     }
 });
-
-// Incoming data route
-bone.io.route('listings', {
-    results: function(listings) {
-        return searchContainer.refresh(listings);
-    }
-});
-

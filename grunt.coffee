@@ -8,11 +8,11 @@ module.exports = (grunt) ->
             options: bare: true
             files:
                 "bone.io.js": [
-                    "lib/client/index.coffee"
-                    "lib/client/history.coffee"
-                    "lib/client/view.coffee"
-                    "lib/client/io.coffee"
-                    "lib/client/router.coffee"
+                    "lib/browser/index.coffee"
+                    "lib/browser/history.coffee"
+                    "lib/browser/view.coffee"
+                    "lib/browser/io.coffee"
+                    "lib/browser/router.coffee"
                 ]
         uglify:
             my_target:
@@ -20,7 +20,7 @@ module.exports = (grunt) ->
                     "bone.io.min.js": ["bone.io.js"]
 
         watch:
-            files: ["lib/client/*.coffee"]
+            files: ["lib/browser/*.coffee"]
             tasks: ["default"]
 
     
