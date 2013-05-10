@@ -24,7 +24,7 @@ Here are a list of the browser components:
 
 * [View](http://bone.io) - A view is based on a CSS selector and handles DOM events and DOM manipulations.
 * [Router](http://bone.io) - A router executes routes based on client side url changes.
-* [Support](http://bone.io) - Supports provide a system for building the structure of a page.
+* [Mounts](http://bone.io) - Mounts provide a system for building the structure of a page.
 * [IO](http://bone.io) - Input/Output handles bi-directional data communication with various endpoints.
 
 This is not an MVC framework!  There is no model, if you need to maintain state on the browser, we recommend that you use the browser sessions.
@@ -115,7 +115,7 @@ The main difference is that the router supports the concept of middleware.  Ther
 * bone.router.middleware.session
 * bone.router.middleware.authenticate
 
-# Support
+# Mounts
 
 To use supports, you need to set your templates.  To set templates for bone, you need to do the following:
 
@@ -137,9 +137,9 @@ bone.support('#content', 'table');
 bone.support('#sidebar', 'list', data);
 ```
 
-You should do this within your routes.  Supports are not intended for dynamic data, they are intended to be the static skeleton.
+You should do this within your routes.  Mounts are not intended for dynamic data, they are intended to be the static skeleton.
 
-Supports are based on a single DOM element, and they are also smart.  They remove existing DOM elements using jquery `remove` before doing their append.  They also will not render twice by default, this keeps your page from being jerky if you specify a certain sidebar element in several routes but not all of them.
+Mounts are based on a single DOM element, and they are also smart.  They remove existing DOM elements using jquery `remove` before doing their append.  They also will not render twice by default, this keeps your page from being jerky if you specify a certain sidebar element in several routes but not all of them.
 
 # IO
 
@@ -155,7 +155,13 @@ bone.io.Search = bone.io('search', {
     },
     middlware: [
         bone.io.middleware.session
-    ]
+    ],
+    outbound: ['results'],
+    inbound: {
+        results: function(data, context) {
+            ...
+        }
+    }
 });
 ```
 
@@ -163,22 +169,3 @@ The `adapter` tells bone.io what type of adapter is being used.  Currently only 
 
 You can also use middleware.  Middleware should define two functions `input` and `output`.  To be run for incoming data and outgoing data respectively.
 
-For inbound data routes from the server:
-
-```js
-bone.io.Search.inbound({
-    results: function(data, context) {
-        ...
-    }
-});
-```
-
-You can also define outbound routes explicitly:
-
-```js
-bone.io.Search.outbound({
-    search: function(data, context) {
-        ...
-    }
-});
-```
