@@ -1,29 +1,25 @@
 {
     "name": "bone.io",
-    "version": "0.0.2",
+    "version": "0.1.0",
+    "main": "./switch.js",
+    "browser": "./bone.io.js",
     "dependencies": {
-        "asset-rack": "2.1.0",
-        "grunt-cli" : "*",
-        "grunt-contrib-coffee" : "*",
         "coffee-script": "*",
         "async": "*"
     },
-
    "devDependencies": {
-    "express": "*",
-    "socket.io": "*",
-    "grunt-contrib-coffee": "*",
-    "grunt-contrib-uglify": "*",
-    "grunt-contrib-watch": "*",
-    "grunt": "*",
-    "grunt-cli":"*",
-    "mocha":"*",
-    "chai":"*",
-    "zombie":"*"
-  },
+        "express": "*",
+        "socket.io": "*",
+        "grunt-contrib-coffee": "*",
+        "grunt-contrib-uglify": "*",
+        "grunt-contrib-watch": "*",
+        "grunt-cli":"*",
+        "mocha":"*",
+        "chai":"*",
+        "zombie":"*"
+    },
     "scripts": {
-        "test": "./node_modules/mocha/bin/mocha test/test.coffee"
-  }
-   
-
+        "test": "./node_modules/mocha/bin/mocha test/test.coffee",
+        "build": "./node_modules/grunt-cli/bin/grunt --gruntfile ./grunt.coffee"
+    }
 }

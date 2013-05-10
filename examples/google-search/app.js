@@ -4,7 +4,8 @@ var express = require('express'),
     app = express(),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server),
-    bone = require('../../lib/server/index'),
+    bone = require('../../.'),
+    pathutil = require('path'),
     list = require('./data');
 
 // Configure the listings data source
@@ -37,12 +38,14 @@ bone.io.route('listings', {
     }
 });
 
-// Server some of our static content.
-app.use('/', express.static(__dirname));
-
 // Make sure the client html gets served
 app.get('/', function(req, res) {
-    res.redirect('/client.html');
+    res.redirect('./search.html?path=./client.html');
+});
+
+app.get('*', function(req, res) {
+    console.log(req.query.path);
+    res.sendfile(pathutil.resolve(req.query.path));
 });
 
 // Listen on a fun port

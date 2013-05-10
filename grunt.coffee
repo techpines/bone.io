@@ -3,7 +3,7 @@ module.exports = (grunt) ->
     
     # Project configuration.
     grunt.initConfig
-        pkg: grunt.file.readJSON("package.json")
+        pkg: grunt.file.readJSON "./package.json"
         coffee: compileJoined:
             options: bare: true
             files:

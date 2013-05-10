@@ -12,7 +12,7 @@ This ain't no meteor man, this is some bone.io
 1. Middleware for everything
 1. Not MVC!
 
-## You Need Actions not Callbacks
+# Philosophy
 
 It's time to take a radically new approach to client side application development.  Frameworks like Bacbone.js, Knockout and others have made great strides in adding the necessary structure to make complex client side applications, but they all have serious problems.
 
@@ -23,6 +23,50 @@ Instead of taking the approach of listening to events.  We decided on a differen
 * Data-Out: Websocket data travelling to the server.
 * Interface: User/System Generated events.
 * Actions: Events that manipulate the DOM.
+
+# Getting Started
+
+Bone.io is mainly a client side framework, however there is a also a server side component for api consistency.
+
+
+### In the Browser
+
+To install the browser library, just include "bone.io.js" and the two dependencies in your html:
+
+```html
+<script src="/jquery.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/bone.io.js"></script>
+```
+
+Bone.io depends on jquery for DOM manipulation, and socket.io for realtime websockets.
+
+Here are a list of the browser components:
+
+* [View](http://bone.io) - A view is based on a CSS selector and handles DOM events and DOM manipulations.
+* [Router](http://bone.io) - A router executes routes based on client side url changes.
+* [Supports](http://bone.io) - Supports provide a system for building the structure of a page.
+* [IO](http://bone.io) - Input/Output handles bi-directional data communication with various endpoints.
+
+This is not an MVC framework!  There is no model, if you need to maintain state on the browser, we recommend that you use the browser sessions.
+
+### On the Server
+
+You can install the library with npm:
+
+```bash
+npm install bone.io
+```
+
+On the server side you can just require it:
+
+```js
+var bone = require('bone.io');
+```
+
+Currently, the only server side component is for IO:
+
+* [IO](http://bone.io) - Input/Output handles bi-directional data communication with connected devices.
 
 ## Views
 
