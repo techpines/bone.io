@@ -117,7 +117,7 @@ The main difference is that the router supports the concept of middleware.  Ther
 
 # Mounts
 
-To use supports, you need to set your templates.  To set templates for bone, you need to do the following:
+To use mounts, you need to set your templates.  To set templates for bone, you need to do the following:
 
 ```js
 bone.templates = {
@@ -129,12 +129,12 @@ bone.templates = {
 
 The templating language is up to you, but it must be compiled to javascript functions.
 
-Then you can setup your supports:
+Then you can setup your mounts:
 
 ```js
-bone.support('body', 'layout');
-bone.support('#content', 'table');
-bone.support('#sidebar', 'list', data);
+bone.mount('body', 'layout');
+bone.mount('#content', 'table');
+bone.mount('#sidebar', 'list', data);
 ```
 
 You should do this within your routes.  Mounts are not intended for dynamic data, they are intended to be the static skeleton.
