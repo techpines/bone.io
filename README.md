@@ -146,12 +146,10 @@ Mounts are based on a single DOM element, and they are also smart.  They remove 
 Input/Output is one of the cool new features of bone.io.  First you have to define an io source:
 
 ```js
-var socket = io.connect();
-
 bone.io.Search = bone.io('search', {
     adapter: 'socket.io',
     options: {
-        socket: socket
+        socket: io.connect()
     },
     middlware: [
         bone.io.middleware.session
