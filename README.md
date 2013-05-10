@@ -24,7 +24,7 @@ Here are a list of the browser components:
 
 * [View](http://bone.io) - A view is based on a CSS selector and handles DOM events and DOM manipulations.
 * [Router](http://bone.io) - A router executes routes based on client side url changes.
-* [Supports](http://bone.io) - Supports provide a system for building the structure of a page.
+* [Support](http://bone.io) - Supports provide a system for building the structure of a page.
 * [IO](http://bone.io) - Input/Output handles bi-directional data communication with various endpoints.
 
 This is not an MVC framework!  There is no model, if you need to maintain state on the browser, we recommend that you use the browser sessions.
@@ -52,47 +52,81 @@ Currently, the only server side component is for IO:
 A view in bone.io is based on a `selector`.  They are easy to declare, and they take care of DOM manipulations and user generated events.
 
 ```js
-bone.view.SomeView = bone.view('.some-awesome-selector', {
+bone.view.SomeView = bone.view('tr.data-row', {
 
-    // This is the events hash, similar to backbone.js.
-    // You map user interface events to functions of the view.
     events: {
-        'click': 'close'
+        'click .icon': 'open': 
+        'click .button.edit': 'edit',
+        'click .button.delete: 'remove'
     },
 
-    // Dom manipulation actions pass
-    // data along as the first argument.
-    render: function(data) {
+    remove: function() {
+        this.$el.remove();
     },
 
-    // User interface actions pass
-    // the jquery event and then data.
-    close: function(event, data) {
-        this.$el.hide();
-    },
+    edit: function() {
+        ...
+    }
+
 });
 ```
 
 You might be wondering, how is this different than Backbone.js?  In bone.io the views are based on "selectors".  Every element that matches the selector will exhibit the same behavior.  This works whether there are 3 elements or 10 elements or 0 elements or it switches between all different numbers of elements.  Bone.io just works.  So no more manually creating and destroying views all over the place, and having zombie views ruin your picnics.
 
+Similar to backbone.js, views have a few handy properties attached to `this`:
 
+* `el` - The dom element for the current action.
+* `$el` - The jquery element for the current action.
+* `$` - Short hand for `this.$el.find`, because scoping is good.
+* `data` - Store and retrieve data on the element shortcut for `$this.$el.data`.
 
+# Router
 
-## Realtime Data, just say not to Models
-
-Models are a great concept, and they are certainly helpful in many situations, unfortunately they are usually overkill for most applications.
-
-Now that we have websockets, a lot of times we want "hot" data plugged directly into the DOM.  A model abstraction is nice but it obfuscates the fusing of hot data directly into the DOM.
-
-For this reason, we introduce the concept of data routes, and we cleverly separate incoming from outgoing data.
+The router in bone.io is very similar to Backbone.js:
 
 ```js
-app.io.configure('my-data-source', {
-    actions: ['search', 'destroy', 'alert', 'error']
-    adapter: 'socket.io'
+bone.router.Router = bone.router({
+
+    routes: {
+        "help":                 "help",    // #help
+        "search/:query":        "search",  // #search/bones
+        "search/:query/p:page": "search"   // #search/bones/p7
+    },
+
+    middleware: [
+        bone.router.middleware.session,
+        bone.router.middleware.authenticate({
+            redirect: '/login'
+        })
+    ]
+
+    help: function() {
+        ...
+    },
+
+    search: function(query, page) {
+        ...
+    }
 });
+```
 
+The main difference is that the router supports the concept of middleware.  There are two router middleware classes.
 
+* bone.router.middleware.session
+* bone.router.middleware.authenticate
 
+# Support
 
+To use the support feature you need templates.  To set templates for bone, you need to do the following:
 
+```js
+bone.templates = templatesObject
+```
+
+Where `templatesObject` should be a javascript object with functions that render html.  There are many ways to create this however the templating language you choose and how you build your templates is outside the scope of bone:
+
+```
+bone.templates = {
+    table: function() { return '<table></table>' }
+};
+```
