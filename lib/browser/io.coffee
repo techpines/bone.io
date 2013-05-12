@@ -1,31 +1,36 @@
 
-bone.io = {}
+bone.io = (source, options) ->
+    adapters[options.adapter] source, options
 
-bone.io.sources = {}
+adapters = bone.io.adapters = {}
 
-bone.io.get = (source) ->
-    socket = bone.io.sources[source]
-    return socket if socket?
-    socket = io.connect()
-    bone.io.sources[source] = socket
-    return socket
+adapters['socket.io'] = (source, options) ->
+    io = {}
+    io.error = options.error
+    io.source = source
+    io.options = options
+    io.socket = options.options.socket
+    io.inbound = options.inbound
+    io.outbound = options.outbound
+    io.inbound.middleware ?= []
+    io.outbound.middleware ?= []
 
-bone.io.route = (sourceName, actions) ->
-    source = bone.io.get(sourceName)
-    for name, action of actions
-        do (name, action) ->
-            source.socket.on "#{sourceName}:#{name}", (data) ->
-                if bone.log
-                    message = "Data-In: [#{sourceName}:#{name}]"
-                    console.log message, data
-                action data
+    for route in io.outbound
+        do (route) ->
+            io[route] = (data, context) ->
+                bone.log "Outbound: [#{source}:#{route}]", data if bone.log?
+                io.socket.emit "#{source}:#{route}", data
 
-bone.io.configure = (source, options) ->
-    name = source
-    source = bone.io.sources[source] =
-        socket: io.connect()
-    for action in options.actions
-        do (action) ->
-            source[action] = (data) ->
-                console.log "Data-Out: [#{name}:#{action}]", data if bone.log
-                source.socket.emit "#{name}:#{action}", data
+    for name, route of io.inbound
+        continue if name is 'middleware'
+        do (name, route) ->
+            io.socket.on "#{source}:#{name}", (data) ->
+                bone.log "Inbound: [#{source}:#{name}]", data if bone.log?
+                context = {}
+                bone.async.each io.inbound.middleware, (callback, next) ->
+                    callback data, context, next
+                , (error) ->
+                    return io.error error if error? and io.error?
+                    route.apply io, [data, context]
+
+    return io

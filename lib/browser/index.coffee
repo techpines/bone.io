@@ -1,8 +1,14 @@
 
-# Index.coffee - Basic setup for the client side bone.io
+# Index.coffee - Basic setup for the browser
 
-# Attach the bone object to the window
-window.bone = {}
+# Setup the bone object
+bone = {}
+
+# Attach bone to the window or exports
+if module?.exports?
+    module.exports = bone
+else
+    window.bone = bone
 
 # Set the dom manipulation library, must be jquery
 bone.$ = window.$
@@ -11,10 +17,7 @@ bone.$ = window.$
 bone.$ ->
   bone.history = new bone.History()
 
-# Whether to turn on logging
-bone.log = true
-
-
-
-            
-
+# Default logging set to console.log
+if window.console?.log?
+    bone.log = ->
+        console.log.apply console, arguments

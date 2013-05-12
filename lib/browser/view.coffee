@@ -17,9 +17,9 @@ initView = (root, view, options) ->
             continue
         do (name, action) ->
             boneView[name] = (data) ->
-                if bone.log
+                if bone.log?
                     message = "View: [#{options.selector}:#{name}]"
-                    console.log message, boneView.el, data
+                    bone.log message, boneView.el, data
                 action.call boneView, data
     boneView
 
@@ -40,9 +40,9 @@ bone.view = (selector, options) ->
             action = options[functionName]
             $ -> $('body').on eventName, fullSelector, (event) ->
                 root = $(event.currentTarget).parents(selector)[0]
-                if bone.log
+                if bone.log?
                     message = "Interface: [#{fullSelector}:#{eventName}]"
-                    console.log message, root
+                    bone.log message, root
                 boneView = $(root).data 'bone-view'
                 unless boneView?
                     boneView = initView root, view, options
@@ -65,8 +65,8 @@ bone.view = (selector, options) ->
                         unless boneView?
                             boneView = initView element, view, options
                             $(element).data 'bone-view'
-                        if bone.log
+                        if bone.log?
                             message = "View: [#{selector}:#{name}]"
-                            console.log message, element, data
+                            bone.log message, element, data
                         action.call boneView, data
     return view

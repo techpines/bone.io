@@ -151,11 +151,15 @@ bone.io.Search = bone.io('search', {
     options: {
         socket: io.connect()
     },
-    middlware: [
-        bone.io.middleware.session
-    ],
-    outbound: ['results'],
+    outbound: {
+        middleware: [
+            bone.io.middleware.session
+        ]
+        shortcuts: ['results'],
     inbound: {
+        middleware: [
+            bone.io.middleware.session
+        ]
         results: function(data, context) {
             ...
         }

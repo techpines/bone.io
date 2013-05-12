@@ -1,12 +1,13 @@
 
-app = require('../../examples/google-search/app')
+app = require('../../examples/textsearch/app')
 Browser = require 'zombie'
 browser = new Browser(silent: true)
 should = require('chai').should()
 
 describe 'View testing', ->
   it 'should work display all of the Simpsons', (done) ->
-    browser.visit 'http://localhost:7076/client.html', ->
+    browser.visit 'http://localhost:7076/search.html?path=./client.html', (error) ->
+        throw error if error?
         browser.window.$('input.search').val 'simp'
         browser.window.$('input.search').keyup()
         setTimeout ->
@@ -33,10 +34,7 @@ describe 'View testing', ->
             done()
         , 400
         
-"""
- after (done) -> process.nextTick ->
-     browser.window.bone.io.get('listings').disconnect()
-     browser.close()
-     app.server.close ->
+after (done) -> process.nextTick ->
+    browser.close()
+    app.server.close ->
         done()
-"""

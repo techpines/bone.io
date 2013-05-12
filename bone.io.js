@@ -1,4 +1,12 @@
-window.bone = {};
+var bone, _ref;
+
+bone = {};
+
+if ((typeof module !== "undefined" && module !== null ? module.exports : void 0) != null) {
+  module.exports = bone;
+} else {
+  window.bone = bone;
+}
 
 bone.$ = window.$;
 
@@ -6,7 +14,66 @@ bone.$(function() {
   return bone.history = new bone.History();
 });
 
-bone.log = true;
+if (((_ref = window.console) != null ? _ref.log : void 0) != null) {
+  bone.log = function() {
+    return console.log.apply(console, arguments);
+  };
+}
+
+var only_once, _each;
+
+bone.async = {};
+
+_each = function(arr, iterator) {
+  var i, _results;
+
+  if (arr.forEach) {
+    return arr.forEach(iterator);
+  }
+  i = 0;
+  _results = [];
+  while (i < arr.length) {
+    iterator(arr[i], i, arr);
+    _results.push(i += 1);
+  }
+  return _results;
+};
+
+only_once = function(fn) {
+  var called;
+
+  called = false;
+  return function() {
+    if (called) {
+      throw new Error("Callback was already called.");
+    }
+    called = true;
+    return fn.apply(root, arguments_);
+  };
+};
+
+bone.async.each = function(arr, iterator, callback) {
+  var completed;
+
+  callback = callback || function() {};
+  if (!arr.length) {
+    return callback();
+  }
+  completed = 0;
+  return _each(arr, function(x) {
+    return iterator(x, only_once(function(err) {
+      if (err) {
+        callback(err);
+        return callback = function() {};
+      } else {
+        completed += 1;
+        if (completed >= arr.length) {
+          return callback(null);
+        }
+      }
+    }));
+  });
+};
 
 var extend, isExplorer, rootStripper, routeStripper, trailingSlash;
 
@@ -226,9 +293,9 @@ initView = function(root, view, options) {
     return boneView[name] = function(data) {
       var message;
 
-      if (bone.log) {
+      if (bone.log != null) {
         message = "View: [" + options.selector + ":" + name + "]";
-        console.log(message, boneView.el, data);
+        bone.log(message, boneView.el, data);
       }
       return action.call(boneView, data);
     };
@@ -269,9 +336,9 @@ bone.view = function(selector, options) {
         var boneView, message, root;
 
         root = $(event.currentTarget).parents(selector)[0];
-        if (bone.log) {
+        if (bone.log != null) {
           message = "Interface: [" + fullSelector + ":" + eventName + "]";
-          console.log(message, root);
+          bone.log(message, root);
         }
         boneView = $(root).data('bone-view');
         if (boneView == null) {
@@ -308,9 +375,9 @@ bone.view = function(selector, options) {
             boneView = initView(element, view, options);
             $(element).data('bone-view');
           }
-          if (bone.log) {
+          if (bone.log != null) {
             message = "View: [" + selector + ":" + name + "]";
-            console.log(message, element, data);
+            bone.log(message, element, data);
           }
           return action.call(boneView, data);
         })(element));
@@ -332,65 +399,70 @@ bone.view = function(selector, options) {
   return view;
 };
 
-bone.io = {};
+var adapters;
 
-bone.io.sources = {};
-
-bone.io.get = function(source) {
-  var socket;
-
-  socket = bone.io.sources[source];
-  if (socket != null) {
-    return socket;
-  }
-  socket = io.connect();
-  bone.io.sources[source] = socket;
-  return socket;
+bone.io = function(source, options) {
+  return adapters[options.adapter](source, options);
 };
 
-bone.io.route = function(sourceName, actions) {
-  var action, name, source, _results;
+adapters = bone.io.adapters = {};
 
-  source = bone.io.get(sourceName);
-  _results = [];
-  for (name in actions) {
-    action = actions[name];
-    _results.push((function(name, action) {
-      return source.socket.on("" + sourceName + ":" + name, function(data) {
-        var message;
+adapters['socket.io'] = function(source, options) {
+  var io, name, route, _base, _base1, _fn, _fn1, _i, _len, _ref, _ref1, _ref2, _ref3;
 
-        if (bone.log) {
-          message = "Data-In: [" + sourceName + ":" + name + "]";
-          console.log(message, data);
-        }
-        return action(data);
-      });
-    })(name, action));
+  io = {};
+  io.error = options.error;
+  io.source = source;
+  io.options = options;
+  io.socket = options.options.socket;
+  io.inbound = options.inbound;
+  io.outbound = options.outbound;
+  if ((_ref = (_base = io.inbound).middleware) == null) {
+    _base.middleware = [];
   }
-  return _results;
-};
-
-bone.io.configure = function(source, options) {
-  var action, name, _i, _len, _ref, _results;
-
-  name = source;
-  source = bone.io.sources[source] = {
-    socket: io.connect()
+  if ((_ref1 = (_base1 = io.outbound).middleware) == null) {
+    _base1.middleware = [];
+  }
+  _ref2 = io.outbound;
+  _fn = function(route) {
+    return io[route] = function(data, context) {
+      if (bone.log != null) {
+        bone.log("Outbound: [" + source + ":" + route + "]", data);
+      }
+      return io.socket.emit("" + source + ":" + route, data);
+    };
   };
-  _ref = options.actions;
-  _results = [];
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    action = _ref[_i];
-    _results.push((function(action) {
-      return source[action] = function(data) {
-        if (bone.log) {
-          console.log("Data-Out: [" + name + ":" + action + "]", data);
-        }
-        return source.socket.emit("" + name + ":" + action, data);
-      };
-    })(action));
+  for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
+    route = _ref2[_i];
+    _fn(route);
   }
-  return _results;
+  _ref3 = io.inbound;
+  _fn1 = function(name, route) {
+    return io.socket.on("" + source + ":" + name, function(data) {
+      var context;
+
+      if (bone.log != null) {
+        bone.log("Inbound: [" + source + ":" + name + "]", data);
+      }
+      context = {};
+      return bone.async.each(io.inbound.middleware, function(callback, next) {
+        return callback(data, context, next);
+      }, function(error) {
+        if ((error != null) && (io.error != null)) {
+          return io.error(error);
+        }
+        return route.apply(io, [data, context]);
+      });
+    });
+  };
+  for (name in _ref3) {
+    route = _ref3[name];
+    if (name === 'middleware') {
+      continue;
+    }
+    _fn1(name, route);
+  }
+  return io;
 };
 
 var routeToRegex;
@@ -431,4 +503,23 @@ bone.router = function(options) {
     }
     return options.initialize();
   });
+};
+
+var $;
+
+$ = bone.$;
+
+bone.mount = function(selector, templateName, data, options) {
+  var $current, template, templateString;
+
+  $current = $(selector);
+  template = bone.templates[templateName];
+  templateString = template(data);
+  if ($current.children().length !== 0) {
+    if (options.refresh) {
+      return;
+    }
+    $current.children().remove();
+  }
+  return $current.html(templateString);
 };

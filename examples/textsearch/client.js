@@ -1,9 +1,13 @@
 
+var socket = io.connect(),
+    io   = bone.io,
+    view = bone.view;
+
 // Configure our IO source
-bone.io.Listings = bone.io('listings', {
+io.Listings = io('listings', {
     adapter: 'socket.io',
     options: {
-        socket: io.connect()
+        socket: socket
     },
     
     // Outgoing data route
@@ -12,7 +16,7 @@ bone.io.Listings = bone.io('listings', {
     // Incoming data route
     inbound: {
         results: function(listings) {
-            this.view.SearchContainer.refresh(listings);
+            view.SearchContainer.refresh(listings);
         }
     }
 });
@@ -21,7 +25,7 @@ bone.io.Listings = bone.io('listings', {
 // The first argument is a CSS selector specifying which
 // elements that this view represents.
 // The second argument is the constructor object.
-bone.view.SearchContainer = bone.view('.search-container', {
+view.SearchContainer = view('.search-container', {
 
     // Simple events hash
     events: {
@@ -39,18 +43,20 @@ bone.view.SearchContainer = bone.view('.search-container', {
         // Empty the listings box
         $listings.html('');
         
+        console.log('hey oh duggy');
+
         // Iterate through then new listings from the server
         $.each(listings, function(index, listing) {
             
             // Add the listing to the list.
             $('<li>').appendTo($listings)
-                     .html(self.highlight(listing));
+                     .html(self.highlight(fragment, listing));
         });
     },
 
     // Highlight individual entries
-    highlight: function(item) {
-        fragment = this.fragment.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
+    highlight: function(fragment, item) {
+        var fragment = fragment.replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&');
         regex = new RegExp('(' + fragment + ')', 'ig');
         return item.replace(regex, function ($1, match) {
             return '<strong>' + match + '</strong>'
@@ -58,11 +64,11 @@ bone.view.SearchContainer = bone.view('.search-container', {
     },
 
     // Triggers a search
-    search: function(root, event) {
-        this.fragment = $(root).find('input.search').val();
-        if (fragment.length == 0) {
+    search: function(event) {
+        this.fragment = this.$('input.search').val();
+        if (this.fragment.length == 0) {
             return this.refresh([]);
         }
-        this.io.Listings.search(fragment);
+        io.Listings.search(this.fragment);
     }
 });

@@ -1,54 +1,43 @@
 
 async = require 'async'
 bone = module.exports = {}
-bone.io = {}
-bone.io.sources = {}
-bone.io.adapters = {}
-
-# Simple register adapters code
-bone.io.register = (adapter, callback) ->
-    bone.io.adapters[adapter] = callback
-
-# Register the adapter for a socket.io server
-bone.io.register 'socket.io-server', (source, options, actions) ->
-
-    options.outgoing ?= []
-    options.incoming ?= []
-
-    # Socket.io servers are configured on the connection event
-    options.io.sockets.on 'connection', (socket) ->
-        
-        # Define an object for this socket
-        self = {}
+bone.log = console.log
             
-        # Bind actions to self
-        for action in options.actions
-            do (action) ->
-                async.series options.outgoing, (error) ->
-                    return bone.io.error error if error
-                    self[action] = (data) ->
-                        socket.emit "#{source}:#{action}", data
-    
-        # Setup the callbacks for incoming routes
-        for key, callback of actions
-            socket.on "#{source}:#{key}", (data) ->
-                context =
-                    cookies: socket.handshake.cookies
-                    socket: socket
-                    headers: socket.handshake.headers
-                    handshake: socket.handshake
-                do (callback) ->
-                    async.series options.incoming, (error) ->
-                        return bone.io.error error if error?
-                        callback.apply self, [data, context]
-            
-bone.io.configure = (source, options) ->
-    bone.io.sources[source] = options: options
-    if options.noIncoming
-        adapter = bone.io.adapters[options.adapter]
-        adapter source, options
+bone.io = (source, options) ->
+    bone.io.adapters[options.adapter] source, options
 
-bone.io.route = (source, actions) ->
-    dataSource = bone.io.sources[source]
-    adapter = bone.io.adapters[dataSource.options.adapter]
-    adapter source, dataSource.options, actions
+adapters = bone.io.adapters = {}
+
+adapters['socket.io-server'] = (source, options) ->
+    sockets = options.options.sockets
+    sockets.on 'connection', (socket) ->
+        io = {}
+        io.error = options.error
+        io.source = source
+        io.options = options
+        io.sockets = sockets
+        io.socket = socket
+        io.inbound = options.inbound
+        io.outbound = options.outbound
+        io.inbound.middleware ?= []
+        io.outbound.middleware ?= []
+        for route in io.outbound
+            do (route) ->
+                io[route] = (data) ->
+                    bone.log "Outbound: [#{source}:#{route}]" if bone.log?
+                    socket.emit "#{source}:#{route}", data
+        for name, route of io.inbound
+            continue if name is 'middleware'
+            do (name, route) ->
+                io.socket.on "#{source}:#{name}", (data) ->
+                    bone.log "Inbound: [#{source}:#{name}]" if bone.log?
+                    context =
+                        cookies: socket.handshake.cookies
+                        socket: socket
+                        headers: socket.handshake.headers
+                        handshake: socket.handshake
+                    async.each io.inbound.middleware, (callback, next) ->
+                        callback data, context, next
+                    , (error) ->
+                        return io.error error if error? and io.error?
+                        route.apply io, [data, context]

@@ -1,2 +1,4 @@
 
-require('./examples/google-search')
+require './mount'
+require './view'
+require './examples/textsearch'

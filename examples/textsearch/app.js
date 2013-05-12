@@ -3,7 +3,7 @@
 var express = require('express'),
     app = express(),
     server = require('http').createServer(app),
-    io = require('socket.io').listen(server),
+    io = require('socket.io').listen(server, {log: false}),
     bone = require('../../.'),
     pathutil = require('path'),
     list = require('./data');
@@ -13,9 +13,9 @@ var express = require('express'),
 bone.io.Listings = bone.io('listings', {
     adapter: 'socket.io-server',
     options: {
-        server: io
+        sockets: io.sockets
     },
-    outbound: ['results']
+    outbound: ['results'],
 
     // Route incoming data requests
     // for the listings data source
@@ -45,7 +45,6 @@ app.get('/', function(req, res) {
 });
 
 app.get('*', function(req, res) {
-    console.log(req.query.path);
     res.sendfile(pathutil.resolve(req.query.path));
 });
 
