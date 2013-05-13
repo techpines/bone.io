@@ -14,20 +14,24 @@ adapters['socket.io'] = (source, options) ->
     io.outbound = options.outbound
     io.inbound.middleware ?= []
     io.outbound.middleware ?= []
+    io.outbound.shortcuts ?= []
+    io.inbound.shortcuts ?= []
 
-    for route in io.outbound
+    # Setup the outbound shortcuts
+    for route in io.outbound.shortcuts
         do (route) ->
             io[route] = (data, context) ->
                 bone.log "Outbound: [#{source}:#{route}]", data if bone.log?
                 io.socket.emit "#{source}:#{route}", data
 
+    # Setup the inbound routes
     for name, route of io.inbound
         continue if name is 'middleware'
         do (name, route) ->
             io.socket.on "#{source}:#{name}", (data) ->
                 bone.log "Inbound: [#{source}:#{name}]", data if bone.log?
                 context = {}
-                bone.async.each io.inbound.middleware, (callback, next) ->
+                bone.async.eachSeries io.inbound.middleware, (callback, next) ->
                     callback data, context, next
                 , (error) ->
                     return io.error error if error? and io.error?

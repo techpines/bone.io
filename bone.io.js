@@ -20,48 +20,18 @@ if (((_ref = window.console) != null ? _ref.log : void 0) != null) {
   };
 }
 
-var only_once, _each;
-
 bone.async = {};
 
-_each = function(arr, iterator) {
-  var i, _results;
-
-  if (arr.forEach) {
-    return arr.forEach(iterator);
-  }
-  i = 0;
-  _results = [];
-  while (i < arr.length) {
-    iterator(arr[i], i, arr);
-    _results.push(i += 1);
-  }
-  return _results;
-};
-
-only_once = function(fn) {
-  var called;
-
-  called = false;
-  return function() {
-    if (called) {
-      throw new Error("Callback was already called.");
-    }
-    called = true;
-    return fn.apply(root, arguments_);
-  };
-};
-
-bone.async.each = function(arr, iterator, callback) {
-  var completed;
+bone.async.eachSeries = function(arr, iterator, callback) {
+  var completed, iterate;
 
   callback = callback || function() {};
   if (!arr.length) {
     return callback();
   }
   completed = 0;
-  return _each(arr, function(x) {
-    return iterator(x, only_once(function(err) {
+  iterate = function() {
+    return iterator(arr[completed], function(err) {
       if (err) {
         callback(err);
         return callback = function() {};
@@ -69,10 +39,85 @@ bone.async.each = function(arr, iterator, callback) {
         completed += 1;
         if (completed >= arr.length) {
           return callback(null);
+        } else {
+          return iterate();
         }
       }
-    }));
-  });
+    });
+  };
+  return iterate();
+};
+
+var adapters;
+
+bone.io = function(source, options) {
+  return adapters[options.adapter](source, options);
+};
+
+adapters = bone.io.adapters = {};
+
+adapters['socket.io'] = function(source, options) {
+  var io, name, route, _base, _base1, _base2, _base3, _fn, _fn1, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
+
+  io = {};
+  io.error = options.error;
+  io.source = source;
+  io.options = options;
+  io.socket = options.options.socket;
+  io.inbound = options.inbound;
+  io.outbound = options.outbound;
+  if ((_ref = (_base = io.inbound).middleware) == null) {
+    _base.middleware = [];
+  }
+  if ((_ref1 = (_base1 = io.outbound).middleware) == null) {
+    _base1.middleware = [];
+  }
+  if ((_ref2 = (_base2 = io.outbound).shortcuts) == null) {
+    _base2.shortcuts = [];
+  }
+  if ((_ref3 = (_base3 = io.inbound).shortcuts) == null) {
+    _base3.shortcuts = [];
+  }
+  _ref4 = io.outbound.shortcuts;
+  _fn = function(route) {
+    return io[route] = function(data, context) {
+      if (bone.log != null) {
+        bone.log("Outbound: [" + source + ":" + route + "]", data);
+      }
+      return io.socket.emit("" + source + ":" + route, data);
+    };
+  };
+  for (_i = 0, _len = _ref4.length; _i < _len; _i++) {
+    route = _ref4[_i];
+    _fn(route);
+  }
+  _ref5 = io.inbound;
+  _fn1 = function(name, route) {
+    return io.socket.on("" + source + ":" + name, function(data) {
+      var context;
+
+      if (bone.log != null) {
+        bone.log("Inbound: [" + source + ":" + name + "]", data);
+      }
+      context = {};
+      return bone.async.eachSeries(io.inbound.middleware, function(callback, next) {
+        return callback(data, context, next);
+      }, function(error) {
+        if ((error != null) && (io.error != null)) {
+          return io.error(error);
+        }
+        return route.apply(io, [data, context]);
+      });
+    });
+  };
+  for (name in _ref5) {
+    route = _ref5[name];
+    if (name === 'middleware') {
+      continue;
+    }
+    _fn1(name, route);
+  }
+  return io;
 };
 
 var extend, isExplorer, rootStripper, routeStripper, trailingSlash;
@@ -218,7 +263,11 @@ bone.History = (function() {
         if (bone.log) {
           console.log("Route: [" + handler.route + ":" + fragment + "]", args);
         }
-        handler.callback.apply(handler.router, args);
+        bone.async.eachSeries(handler.router.middleware, function(callback, next) {
+          return callback.apply(handler.router, [fragment, next]);
+        }, function() {
+          return handler.callback.apply(handler.router, args);
+        });
         continue;
       } else {
         _results.push(void 0);
@@ -281,6 +330,7 @@ initView = function(root, view, options) {
 
   $root = $(root);
   boneView = {};
+  boneView.io = bone.io;
   boneView.data = function() {
     return $root.data.apply($root, arguments);
   };
@@ -288,7 +338,8 @@ initView = function(root, view, options) {
     return $root.find.apply($root, arguments);
   };
   boneView.el = root;
-  boneView.$el = $(root);
+  boneView.$el = $root;
+  console.log(boneView);
   _fn = function(name, action) {
     return boneView[name] = function(data) {
       var message;
@@ -336,6 +387,9 @@ bone.view = function(selector, options) {
         var boneView, message, root;
 
         root = $(event.currentTarget).parents(selector)[0];
+        if (root == null) {
+          root = event.currentTarget;
+        }
         if (bone.log != null) {
           message = "Interface: [" + fullSelector + ":" + eventName + "]";
           bone.log(message, root);
@@ -399,72 +453,6 @@ bone.view = function(selector, options) {
   return view;
 };
 
-var adapters;
-
-bone.io = function(source, options) {
-  return adapters[options.adapter](source, options);
-};
-
-adapters = bone.io.adapters = {};
-
-adapters['socket.io'] = function(source, options) {
-  var io, name, route, _base, _base1, _fn, _fn1, _i, _len, _ref, _ref1, _ref2, _ref3;
-
-  io = {};
-  io.error = options.error;
-  io.source = source;
-  io.options = options;
-  io.socket = options.options.socket;
-  io.inbound = options.inbound;
-  io.outbound = options.outbound;
-  if ((_ref = (_base = io.inbound).middleware) == null) {
-    _base.middleware = [];
-  }
-  if ((_ref1 = (_base1 = io.outbound).middleware) == null) {
-    _base1.middleware = [];
-  }
-  _ref2 = io.outbound;
-  _fn = function(route) {
-    return io[route] = function(data, context) {
-      if (bone.log != null) {
-        bone.log("Outbound: [" + source + ":" + route + "]", data);
-      }
-      return io.socket.emit("" + source + ":" + route, data);
-    };
-  };
-  for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-    route = _ref2[_i];
-    _fn(route);
-  }
-  _ref3 = io.inbound;
-  _fn1 = function(name, route) {
-    return io.socket.on("" + source + ":" + name, function(data) {
-      var context;
-
-      if (bone.log != null) {
-        bone.log("Inbound: [" + source + ":" + name + "]", data);
-      }
-      context = {};
-      return bone.async.each(io.inbound.middleware, function(callback, next) {
-        return callback(data, context, next);
-      }, function(error) {
-        if ((error != null) && (io.error != null)) {
-          return io.error(error);
-        }
-        return route.apply(io, [data, context]);
-      });
-    });
-  };
-  for (name in _ref3) {
-    route = _ref3[name];
-    if (name === 'middleware') {
-      continue;
-    }
-    _fn1(name, route);
-  }
-  return io;
-};
-
 var routeToRegex;
 
 routeToRegex = function(route) {
@@ -509,17 +497,36 @@ var $;
 
 $ = bone.$;
 
-bone.mount = function(selector, templateName, data, options) {
-  var $current, template, templateString;
+bone.mount = function(selector, templateName, options) {
+  var $current, data, info, refresh, sameData, sameTemplate, template, templateString;
 
+  if (options == null) {
+    options = {};
+  }
+  data = options.data;
+  refresh = options.refresh;
+  if (refresh == null) {
+    refresh = false;
+  }
   $current = $(selector);
   template = bone.templates[templateName];
-  templateString = template(data);
+  if (data != null) {
+    templateString = template(data);
+  } else {
+    templateString = template();
+  }
   if ($current.children().length !== 0) {
-    if (options.refresh) {
+    info = $current.data('bone-mount');
+    sameTemplate = info.template === templateName;
+    sameData = info.data === data;
+    if (sameTemplate && sameData && !refresh) {
       return;
     }
     $current.children().remove();
   }
-  return $current.html(templateString);
+  $current.html(templateString);
+  return $current.data('bone-mount', {
+    template: templateName,
+    data: data
+  });
 };

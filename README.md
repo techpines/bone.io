@@ -3,9 +3,20 @@ Realtime browser/server framework
 
 ![bone.io](http://cdn.techpines.io/bone-io-github.png)
 
+# What is Bone.io?
+
+Bone.io is a VIO framework for building high performance, highly scalable single page HTML5 apps.
+
+What does VIO mean?
+
+* View   - HTML5 Document 
+* Input  - Data entering the server or browser environment.
+* Output - Data leaving the server or browser environment.
+
+It's not MVC. Where is the Model/Controller? 
+
 # Getting Started
 
-Bone.io is mainly a client side framework, however there is a also a server side component for api consistency.
 
 
 ### In the Browser

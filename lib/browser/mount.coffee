@@ -5,13 +5,27 @@
 $ = bone.$
 
 # Mount a template to a DOM element
-bone.mount = (selector, templateName, data, options) ->
+bone.mount = (selector, templateName, options) ->
+    options ?= {}
+    data = options.data
+    refresh = options.refresh
+    refresh ?= false
+
     $current = $(selector)
     template = bone.templates[templateName]
-    templateString = template data
+    if data?
+        templateString = template data
+    else
+        templateString = template()
     
     if $current.children().length isnt 0
-        if options.refresh
+        info = $current.data 'bone-mount'
+        sameTemplate = info.template is templateName
+        sameData = info.data is data
+        if sameTemplate and sameData and not refresh
             return
         $current.children().remove()
     $current.html templateString
+    $current.data 'bone-mount',
+        template: templateName
+        data: data

@@ -140,7 +140,10 @@ class bone.History
             args = handler.route.exec(fragment).slice 1
             if bone.log
                 console.log "Route: [#{handler.route}:#{fragment}]", args
-            handler.callback.apply handler.router, args
+            bone.async.eachSeries handler.router.middleware, (callback, next) ->
+                callback.apply handler.router, [fragment, next]
+            , ->
+                handler.callback.apply handler.router, args
             continue
   
   # Save a fragment into the hash history, or replace the URL state if the

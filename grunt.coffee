@@ -10,9 +10,9 @@ module.exports = (grunt) ->
                 "bone.io.js": [
                     "lib/browser/index.coffee"
                     "lib/browser/util.coffee"
+                    "lib/browser/io.coffee"
                     "lib/browser/history.coffee"
                     "lib/browser/view.coffee"
-                    "lib/browser/io.coffee"
                     "lib/browser/router.coffee"
                     "lib/browser/mount.coffee"
                 ]

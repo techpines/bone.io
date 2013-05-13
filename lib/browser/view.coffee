@@ -4,12 +4,14 @@
 initView = (root, view, options) ->
     $root = $(root)
     boneView = {}
+    boneView.io = bone.io
     boneView.data = ->
         $root.data.apply $root, arguments
     boneView.$ = ->
         $root.find.apply $root, arguments
     boneView.el = root
-    boneView.$el = $(root)
+    boneView.$el = $root
+    console.log boneView
     for name, action of options
         continue if name is 'events'
         if Object::toString.call(action) isnt '[object Function]'
@@ -40,6 +42,7 @@ bone.view = (selector, options) ->
             action = options[functionName]
             $ -> $('body').on eventName, fullSelector, (event) ->
                 root = $(event.currentTarget).parents(selector)[0]
+                root ?= event.currentTarget
                 if bone.log?
                     message = "Interface: [#{fullSelector}:#{eventName}]"
                     bone.log message, root
