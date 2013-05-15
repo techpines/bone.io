@@ -53,7 +53,7 @@ bone.view = (selector, options) ->
 
                 if $.trim(selector) isnt $.trim(fullSelector)
                     root = $(fullSelector).parents(selector)[0]
-                action.call boneView, root, event
+                action.call boneView, event
 
     for name, action of options
         continue if name is 'events'

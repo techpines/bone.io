@@ -182,3 +182,25 @@ The `adapter` tells bone.io what type of adapter is being used.  Currently only 
 
 You can also use middleware.  Middleware should define two functions `input` and `output`.  To be run for incoming data and outgoing data respectively.
 
+
+## Recommended Project Struture
+
+```
+/app.js - Your server side code
+/templates - Your HTML templates
+/style - Your CSS or Less, Stylus code
+/browser
+  view.js - Your bone.io view code
+  io.js - Your bone.io io code
+  router.js - Your bone.io router code
+```
+
+If your project is larger, I would suggest separating those single javascript files into folders:
+
+```
+/app.js
+/browser
+  /view
+  /io
+  /router
+```

@@ -402,7 +402,7 @@ bone.view = function(selector, options) {
         if ($.trim(selector) !== $.trim(fullSelector)) {
           root = $(fullSelector).parents(selector)[0];
         }
-        return action.call(boneView, root, event);
+        return action.call(boneView, event);
       });
     });
   };
