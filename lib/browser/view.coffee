@@ -18,11 +18,11 @@ initView = (root, view, options) ->
             boneView[name] = action
             continue
         do (name, action) ->
-            boneView[name] = (data) ->
+            boneView[name] = ->
                 if bone.log?
                     message = "View: [#{options.selector}:#{name}]"
-                    bone.log message, boneView.el, data
-                action.call boneView, data
+                    bone.log message, boneView.el, arguments
+                action.apply boneView, arguments
     boneView
 
 # Creates a view based on the given CSS selector
@@ -61,7 +61,8 @@ bone.view = (selector, options) ->
             view[name] = action
             continue
         do (name, action) ->
-            view[name] = (data) ->
+            view[name] = ->
+                args = arguments
                 for element in $(selector)
                     do (element) ->
                         boneView = $(element).data 'bone-view'
@@ -70,6 +71,6 @@ bone.view = (selector, options) ->
                             $(element).data 'bone-view'
                         if bone.log?
                             message = "View: [#{selector}:#{name}]"
-                            bone.log message, element, data
-                        action.call boneView, data
+                            bone.log message, element, args
+                        action.apply boneView, args
     return view

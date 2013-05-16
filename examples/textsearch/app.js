@@ -15,7 +15,9 @@ bone.io.Listings = bone.io('listings', {
     options: {
         sockets: io.sockets
     },
-    outbound: ['results'],
+    outbound: {
+        shortcuts: ['results'],
+    },
 
     // Route incoming data requests
     // for the listings data source
@@ -34,7 +36,7 @@ bone.io.Listings = bone.io('listings', {
             });
 
             // Calling the results action on the adapter
-            this.results(matches);
+            this.results({fragment: fragment, listings: matches});
         }
     }
 });

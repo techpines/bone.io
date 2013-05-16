@@ -35,8 +35,11 @@ view.SearchContainer = view('.search-container', {
     },
 
     // Refresh search results
-    refresh: function(listings) {
+    refresh: function(data) {
         var self = this;
+
+        var listings = data.listings;
+        var fragment = data.fragment;
 
         // Grab the listings box
         var $listings = self.$('ul.listings');
@@ -44,8 +47,6 @@ view.SearchContainer = view('.search-container', {
         // Empty the listings box
         $listings.html('');
         
-        console.log('hey oh duggy');
-
         // Iterate through then new listings from the server
         $.each(listings, function(index, listing) {
             
@@ -66,10 +67,10 @@ view.SearchContainer = view('.search-container', {
 
     // Triggers a search
     search: function(event) {
-        this.fragment = this.$('input.search').val();
-        if (this.fragment.length == 0) {
+        fragment = this.$('input.search').val();
+        if (fragment.length == 0) {
             return this.refresh([]);
         }
-        io.Listings.search(this.fragment);
+        io.Listings.search(fragment);
     }
 });

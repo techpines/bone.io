@@ -58,7 +58,7 @@ Currently, the only server side component is for IO:
 A view in bone.io is based on a `selector`.  They are easy to declare, and they take care of DOM manipulations and user generated events.
 
 ```js
-bone.view.SomeView = bone.view('tr.data-row', {
+bone.view.DataRow = bone.view('tr.data-row', {
 
     events: {
         'click .icon': 'open': 
@@ -66,11 +66,11 @@ bone.view.SomeView = bone.view('tr.data-row', {
         'click .button.delete': 'remove'
     },
 
-    remove: function() {
+    remove: function(event) {
         this.$el.remove();
     },
 
-    edit: function() {
+    edit: function(data) {
         ...
     }
 
