@@ -173,7 +173,7 @@ bone.Router = bone.router({
         bone.router.middleware.authenticate({
             redirect: '/login'
         })
-    ]
+    ],
 
     help: function() {
         ...
