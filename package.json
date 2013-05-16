@@ -1,6 +1,6 @@
 {
     "name": "bone.io",
-    "version": "0.1.1",
+    "version": "0.8.0",
     "main": "./switch.js",
     "browser": "./bone.io.js",
     "dependencies": {
