@@ -126,6 +126,8 @@ You can also use middleware.  Middleware should define two functions `input` and
 
 # Router
 
+![bone.io](http://cdn.techpines.io/bone.io-view-architecture.png)
+
 The router in bone.io is very similar to Backbone.js:
 
 ```js
