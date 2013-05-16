@@ -61,7 +61,7 @@ A view in bone.io is based on a `selector`.  They are easy to declare, and they 
 bone.view.DataRow = bone.view('tr.data-row', {
 
     events: {
-        'click .icon': 'open': 
+        'click .icon': 'open',
         'click .button.edit': 'edit',
         'click .button.delete': 'remove'
     },
