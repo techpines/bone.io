@@ -152,9 +152,11 @@ You should do this within your routes.  Mounts are not intended for dynamic data
 
 Mounts are based on a single DOM element, and they are also smart.  They remove existing DOM elements using jquery `remove` before doing their append.  They also will not render twice by default, this keeps your page from being jerky if you specify a certain sidebar element in several routes but not all of them.
 
-# IO
+# IO (Input/Output)
 
-![bone.io](http://cdn.techpines.io/bone.io-io-architecture.png)
+IO is a crucial part of any realtime app, and for bone.io the following diagram illustrates the basic architecture:
+
+![bone.io](http://cdn.techpines.io/bone.io-io-architecture-github.png)
 
 Input/Output is one of the cool new features of bone.io.  First you have to define an io source:
 
