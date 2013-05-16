@@ -10,14 +10,11 @@ Bone.io is a VIO framework for building high performance, highly scalable single
 What does VIO mean?
 
 * View   - HTML5 Document 
-* Input  - Data entering the server or browser environment.
-* Output - Data leaving the server or browser environment.
+* Input  - Data entering the browser or server.
+* Output - Data leaving the browser or server.
 
-It's not MVC. Where is the Model/Controller? 
 
 # Getting Started
-
-
 
 ### In the Browser
 
@@ -34,9 +31,9 @@ Bone.io depends on jquery for DOM manipulation, and socket.io for realtime webso
 Here are a list of the browser components:
 
 * [View](http://bone.io) - A view is based on a CSS selector and handles DOM events and DOM manipulations.
-* [Router](http://bone.io) - A router executes routes based on client side url changes.
-* [Mounts](http://bone.io) - Mounts provide a system for building the structure of a page.
 * [IO](http://bone.io) - Input/Output handles bi-directional data communication with various endpoints.
+* [Router](http://bone.io) - A router executes routes based on client side url changes.
+* [Templates](http://bone.io) - Use any templating system you like and plug into the bone.io templating infrastructure.
 
 ### On the Server
 
@@ -91,6 +88,42 @@ Similar to backbone.js, views have a few handy properties attached to `this`:
 * `$` - Short hand for `this.$el.find`, because scoping is good.
 * `data` - Store and retrieve data on the element shortcut for `$this.$el.data`.
 
+# IO (Input/Output)
+
+IO is a crucial part of any realtime app, and for bone.io the following diagram illustrates the basic architecture:
+
+![bone.io](http://cdn.techpines.io/bone.io-io-architecture-github.png)
+
+Input/Output is one of the cool new features of bone.io.  First you have to define an io source:
+
+```js
+bone.io.Search = bone.io('search', {
+    adapter: 'socket.io',
+    options: {
+        socket: io.connect()
+    },
+    outbound: {
+        middleware: [
+            bone.io.middleware.session
+        ]
+        shortcuts: ['results'],
+    inbound: {
+        middleware: [
+            bone.io.middleware.session
+        ]
+        results: function(data, context) {
+            ...
+        }
+    }
+});
+```
+
+The `adapter` tells bone.io what type of adapter is being used.  Currently only socket.io is supported.  The options object gives options for the adapter.  The `actions` give the names of functions that can be called on the IO object to make server calls.  For the socket.io adapter by default, these will be simple `socket.emit` calls.
+
+You can also use middleware.  Middleware should define two functions `input` and `output`.  To be run for incoming data and outgoing data respectively.
+
+
+
 # Router
 
 The router in bone.io is very similar to Backbone.js:
@@ -126,9 +159,9 @@ The main difference is that the router supports the concept of middleware.  Ther
 * bone.router.middleware.session
 * bone.router.middleware.authenticate
 
-# Mounts
+# Templates
 
-To use mounts, you need to set your templates.  To set templates for bone, you need to do the following:
+To set templates for bone.io, you need to do the following:
 
 ```js
 bone.templates = {
@@ -140,52 +173,19 @@ bone.templates = {
 
 The templating language is up to you, but it must be compiled to javascript functions.
 
-Then you can setup your mounts:
+Then for mounting different parts of the page you can use the `mount` command:
 
 ```js
 bone.mount('body', 'layout');
 bone.mount('#content', 'table');
-bone.mount('#sidebar', 'list', data);
+bone.mount('#sidebar', 'list', {data: 'hello', refresh: true});
 ```
 
-You should do this within your routes.  Mounts are not intended for dynamic data, they are intended to be the static skeleton.
+Your mounts should cascade, which is that your highest level DOM nodes need to be mounted first.  In the example above, the `layout` template is attached to the `body` first, before the sub templates.
 
-Mounts are based on a single DOM element, and they are also smart.  They remove existing DOM elements using jquery `remove` before doing their append.  They also will not render twice by default, this keeps your page from being jerky if you specify a certain sidebar element in several routes but not all of them.
+Typically, you should do this within your routes.  Mounts are not really intended for dynamic data, they are intended to be the static skeleton of a page.
 
-# IO (Input/Output)
-
-IO is a crucial part of any realtime app, and for bone.io the following diagram illustrates the basic architecture:
-
-![bone.io](http://cdn.techpines.io/bone.io-io-architecture-github.png)
-
-Input/Output is one of the cool new features of bone.io.  First you have to define an io source:
-
-```js
-bone.io.Search = bone.io('search', {
-    adapter: 'socket.io',
-    options: {
-        socket: io.connect()
-    },
-    outbound: {
-        middleware: [
-            bone.io.middleware.session
-        ]
-        shortcuts: ['results'],
-    inbound: {
-        middleware: [
-            bone.io.middleware.session
-        ]
-        results: function(data, context) {
-            ...
-        }
-    }
-});
-```
-
-The `adapter` tells bone.io what type of adapter is being used.  Currently only socket.io is supported.  The options object gives options for the adapter.  The `actions` give the names of functions that can be called on the IO object to make server calls.  For the socket.io adapter by default, these will be simple `socket.emit` calls.
-
-You can also use middleware.  Middleware should define two functions `input` and `output`.  To be run for incoming data and outgoing data respectively.
-
+Mounts are based on a single DOM element.  They remove existing DOM elements using jquery `remove` before doing their append.  They also will not render twice by default, this allows you to mount say, your navbar in every route, but then have it not rerender every time a route is called.
 
 ## Recommended Project Struture
 
