@@ -1,6 +1,4 @@
 
-Realtime browser/server framework
-
 ![bone.io](http://cdn.techpines.io/bone-io-github.png)
 
 # What is Bone.io?
