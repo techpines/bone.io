@@ -2,7 +2,8 @@
 try {
     module.exports = require('./compiled');
 } catch(error) {
-    require('./node_modules/coffee-script');
+    // This is just for dev, coffee script is not a hard dependency
+    require('coffee-script');
     module.exports = require('./lib/server');
 }
 

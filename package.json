@@ -4,11 +4,11 @@
     "main": "./switch.js",
     "browser": "./bone.io.js",
     "dependencies": {
-        "coffee-script": "*",
         "async": "*"
     },
    "devDependencies": {
         "express": "*",
+        "coffee-script": "*",
         "socket.io": "*",
         "grunt-contrib-coffee": "*",
         "grunt-contrib-uglify": "*",

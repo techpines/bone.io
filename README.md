@@ -154,6 +154,8 @@ Mounts are based on a single DOM element, and they are also smart.  They remove 
 
 # IO
 
+![bone.io](http://cdn.techpines.io/bone.io-io-architecture.png)
+
 Input/Output is one of the cool new features of bone.io.  First you have to define an io source:
 
 ```js

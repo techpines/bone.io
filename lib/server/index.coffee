@@ -8,10 +8,11 @@ bone.io = (source, options) ->
 
 adapters = bone.io.adapters = {}
 
-adapters['socket.io-server'] = (source, options) ->
+adapters['socket.io'] = (source, options) ->
     sockets = options.options.sockets
     sockets.on 'connection', (socket) ->
         io = {}
+        console.log options
         io.error = options.error
         io.source = source
         io.options = options
