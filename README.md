@@ -38,8 +38,6 @@ Here are a list of the browser components:
 * [Mounts](http://bone.io) - Mounts provide a system for building the structure of a page.
 * [IO](http://bone.io) - Input/Output handles bi-directional data communication with various endpoints.
 
-This is not an MVC framework!  There is no model, if you need to maintain state on the browser, we recommend that you use the browser sessions.
-
 ### On the Server
 
 You can install the library with npm:
@@ -58,7 +56,9 @@ Currently, the only server side component is for IO:
 
 * [IO](http://bone.io) - Input/Output handles bi-directional data communication with connected devices.
 
-## Views
+## View
+
+![bone.io](http://cdn.techpines.io/bone.io-io-view-architecture.png)
 
 A view in bone.io is based on a `selector`.  They are easy to declare, and they take care of DOM manipulations and user generated events.
 
