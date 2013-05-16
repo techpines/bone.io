@@ -55,7 +55,7 @@ Currently, the only server side component is for IO:
 
 ## View
 
-![bone.io](http://cdn.techpines.io/bone.io-view-architecture.png)
+![bone.io](http://cdn.techpines.io/bone.io-view-architecture-github.png)
 
 A view in bone.io is based on a `selector`.  They are easy to declare, and they take care of DOM manipulations and user generated events.
 
