@@ -1,7 +1,7 @@
 
 async = require 'async'
 bone = module.exports = {}
-bone.log = console.log
+#bone.log = console.log
             
 bone.io = (source, options) ->
     bone.io.adapters[options.adapter] source, options

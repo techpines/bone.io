@@ -11,7 +11,6 @@ initView = (root, view, options) ->
         $root.find.apply $root, arguments
     boneView.el = root
     boneView.$el = $root
-    console.log boneView
     for name, action of options
         continue if name is 'events'
         if Object::toString.call(action) isnt '[object Function]'
@@ -28,6 +27,7 @@ initView = (root, view, options) ->
 # Creates a view based on the given CSS selector
 bone.view = (selector, options) ->
     view = {}
+    options.selector = selector
     events = options.events
     for eventSelector, functionName of events
         continue if functionName is 'events'

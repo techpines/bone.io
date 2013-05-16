@@ -375,6 +375,7 @@ bone.view = function(selector, options) {
   var action, eventSelector, events, functionName, name, view, _fn, _fn1;
 
   view = {};
+  options.selector = selector;
   events = options.events;
   _fn = function(eventSelector, functionName) {
     var action, eventName, eventSplitter, fullSelector, match, subSelector;

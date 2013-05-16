@@ -12,7 +12,7 @@ io.LiveReload = io('live-reload', {
     inbound:  {
         cssChanged: function(css) {
             console.log('hey oh');
-            $('link').remove();
+            $('link.live-reload').remove();
             $('style').remove();
             $('head').append($('<style>'));
             $('style').html(css);

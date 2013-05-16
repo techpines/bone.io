@@ -69,7 +69,7 @@ view.SearchContainer = view('.search-container', {
     search: function(event) {
         fragment = this.$('input.search').val();
         if (fragment.length == 0) {
-            return this.refresh([]);
+            return this.refresh({listings: []});
         }
         io.Listings.search(fragment);
     }
