@@ -11,7 +11,7 @@ var express = require('express'),
 // Configure the listings data source
 // We are using the socket.io server adapter
 bone.io.Listings = bone.io('listings', {
-    adapter: 'socket.io-server',
+    adapter: 'socket.io',
     options: {
         sockets: io.sockets
     },

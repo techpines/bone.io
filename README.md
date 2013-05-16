@@ -187,6 +187,24 @@ Typically, you should do this within your routes.  Mounts are not really intende
 
 Mounts are based on a single DOM element.  They remove existing DOM elements using jquery `remove` before doing their append.  They also will not render twice by default, this allows you to mount say, your navbar in every route, but then have it not rerender every time a route is called.
 
+## Logging
+
+By default, bone.io will log activity to the console.  Here are the log messages:
+
+```
+Inbound:   [eventSpace:action] data         # Data coming into the browser
+Outbound:  [eventSpace:action] data         # Data going out of the browser
+View:      [selector:action]   data         # DOM manipulation action
+Interface: [selector:event]    eventTarget  # DOM events
+Route:     [regex:url]                      # URL Route Change
+```
+
+_Warning_: You should never run the logger in production, it causes memory leaks.  It is strictly for development purposes.  In production, you need to turn it off:
+
+```js
+bone.log = undefined;
+```
+
 ## Recommended Project Struture
 
 ```

@@ -11,8 +11,9 @@ io.Listings = io('listings', {
     },
     
     // Outgoing data route
-    outbound: ['search'],
-
+    outbound: {
+        shortcuts: ['search'],
+    },
     // Incoming data route
     inbound: {
         results: function(listings) {
