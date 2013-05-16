@@ -28,10 +28,10 @@ Bone.io depends on jquery for DOM manipulation, and socket.io for realtime webso
 
 Here are a list of the browser components:
 
-* [View](http://bone.io) - A view is based on a CSS selector and handles DOM events and DOM manipulations.
-* [IO](http://bone.io) - Input/Output handles bi-directional data communication with various endpoints.
-* [Router](http://bone.io) - A router executes routes based on client side url changes.
-* [Templates](http://bone.io) - Use any templating system you like and plug into the bone.io templating infrastructure.
+* [View](https://github.com/techpines/bone.io#view) - A view is based on a CSS selector and handles DOM events and DOM manipulations.
+* [IO](https://github.com/techpines/bone.io#io-inputoutput) - Input/Output handles bi-directional data communication with various endpoints.
+* [Router](https://github.com/techpines/bone.io#templates) - A router executes routes based on client side url changes.
+* [Templates](https://github.com/techpines/bone.io#templates) - Use any templating system you like and plug into the bone.io templating infrastructure.
 
 ### On the Server
 
@@ -98,11 +98,13 @@ bone.io.Search = bone.io('search', {
     options: {
         socket: io.connect()
     },
+
     outbound: {
         middleware: [
             bone.io.middleware.session
         ]
         shortcuts: ['search'],
+
     inbound: {
         middleware: [
             bone.io.middleware.session
@@ -133,11 +135,13 @@ bone.io.Search = bone.io('search', {
     options: {
         sockets: io.sockets
     },
+
     outbound: {
         middleware: [
             bone.io.middleware.session
         ]
         shortcuts: ['results'],
+
     inbound: {
         middleware: [
             bone.io.middleware.session
@@ -156,7 +160,7 @@ bone.io.Search = bone.io('search', {
 The router in bone.io is very similar to Backbone.js:
 
 ```js
-bone.router.Router = bone.router({
+bone.Router = bone.router({
 
     routes: {
         "help":                 "help",    // #help
@@ -232,24 +236,12 @@ _Warning_: You should never run the logger in production, it causes memory leaks
 bone.log = undefined;
 ```
 
-## Recommended Project Struture
+## License
 
-```
-/app.js - Your server side code
-/templates - Your HTML templates
-/style - Your CSS or Less, Stylus code
-/browser
-  view.js - Your bone.io view code
-  io.js - Your bone.io io code
-  router.js - Your bone.io router code
-```
+©2013 Brad Carleton, Tech Pines LLC and available under the [MIT license](http://www.opensource.org/licenses/mit-license.php):
 
-If your project is larger, I would suggest separating those single javascript files into folders:
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in   the Software without restriction, including without limitation the rights to    use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies   of the Software, and to permit persons to whom the Software is furnished to do  so, subject to the following conditions:
 
-```
-/app.js
-/browser
-  /view
-  /io
-  /router
-```
+The above copyright notice and this permission notice shall be included in all  copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR      IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE     AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER          LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE   SOFTWARE.
