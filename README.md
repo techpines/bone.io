@@ -55,7 +55,7 @@ Currently, the only server side component is for IO:
 
 ![bone.io](http://cdn.techpines.io/bone.io-view-architecture-github.png)
 
-A view in bone.io is based on a `selector`.  They are easy to declare, and they take care of DOM manipulations and user generated events.
+A view in bone.io is based on a `selector`.  They take care of DOM events and changes.
 
 ```js
 bone.view.DataRow = bone.view('tr.data-row', {
@@ -77,8 +77,6 @@ bone.view.DataRow = bone.view('tr.data-row', {
 });
 ```
 
-You might be wondering, how is this different than Backbone.js?  In bone.io the views are based on "selectors".  Every element that matches the selector will exhibit the same behavior.  This works whether there are 3 elements or 10 elements or 0 elements or it switches between all different numbers of elements.  Bone.io just works.  So no more manually creating and destroying views all over the place, and having zombie views ruin your picnics.
-
 Similar to backbone.js, views have a few handy properties attached to `this`:
 
 * `el` - The dom element for the current action.
@@ -92,7 +90,7 @@ IO is a crucial part of any realtime app, and for bone.io the following diagram 
 
 ![bone.io](http://cdn.techpines.io/bone.io-io-architecture-github.png)
 
-Input/Output is one of the cool new features of bone.io.  First you have to define an io source:
+### In the Browser
 
 ```js
 bone.io.Search = bone.io('search', {
@@ -104,7 +102,7 @@ bone.io.Search = bone.io('search', {
         middleware: [
             bone.io.middleware.session
         ]
-        shortcuts: ['results'],
+        shortcuts: ['search'],
     inbound: {
         middleware: [
             bone.io.middleware.session
@@ -121,6 +119,35 @@ The `adapter` tells bone.io what type of adapter is being used.  Currently only 
 You can also use middleware.  Middleware should define two functions `input` and `output`.  To be run for incoming data and outgoing data respectively.
 
 
+### On the Server
+
+Here's an example using `express`:
+
+```js
+var app = require('express')(),
+    server = require('http').createServer(app),
+    io = require('socket.io').listen(server);
+
+bone.io.Search = bone.io('search', {
+    adapter: 'socket.io',
+    options: {
+        sockets: io.sockets
+    },
+    outbound: {
+        middleware: [
+            bone.io.middleware.session
+        ]
+        shortcuts: ['results'],
+    inbound: {
+        middleware: [
+            bone.io.middleware.session
+        ]
+        search: function(data, context) {
+            ...
+        }
+    }
+});
+```
 
 # Router
 
