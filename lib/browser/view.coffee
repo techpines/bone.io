@@ -1,10 +1,13 @@
 
 # View.coffee - Setup the bone views
 
+id = 0
+
 initView = (root, view, options) ->
     $root = $(root)
     boneView = {}
     boneView.io = bone.io
+    boneView.id = id += 1
     boneView.data = ->
         $root.data.apply $root, arguments
     boneView.$ = ->
@@ -26,7 +29,8 @@ initView = (root, view, options) ->
 
 # Creates a view based on the given CSS selector
 bone.view = (selector, options) ->
-    view = {}
+    view = (selector) ->
+        
     options.selector = selector
     events = options.events
     for eventSelector, functionName of events
