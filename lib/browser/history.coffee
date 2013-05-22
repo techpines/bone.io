@@ -138,8 +138,8 @@ class bone.History
     for handler in @handlers
         if handler.route.test fragment
             args = handler.route.exec(fragment).slice 1
-            if bone.log
-                console.log "Route: [#{handler.route}:#{fragment}]", args
+            if bone.log?
+                bone.log "Route: [#{handler.route}:#{fragment}]", args
             bone.async.eachSeries handler.router.middleware, (callback, next) ->
                 callback.apply handler.router, [fragment, next]
             , ->

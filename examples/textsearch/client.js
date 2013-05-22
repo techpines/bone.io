@@ -16,7 +16,7 @@ io.Listings = io('listings', {
     },
     // Incoming data route
     inbound: {
-        results: function(listings) {
+        results: function(listings, context) {
             view.SearchContainer.refresh(listings);
         }
     }
@@ -31,7 +31,6 @@ view.SearchContainer = view('.search-container', {
     // Simple events hash
     events: {
         'keyup input.search': 'search',
-        'click .searchBtn': 'search'
     },
 
     // Refresh search results

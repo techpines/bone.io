@@ -1,10 +1,11 @@
 
 body {
-    background: yellow;
+    background: blue;
 }
 
 h1 {
     font-family: monospace;
     text-align: center;
-    padding-top: 20px;
+    padding-top: 40px;
+    font-size: 200px;
 }

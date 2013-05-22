@@ -39,7 +39,8 @@ createIO = (socket, options, type) ->
                     socket: socket
                     headers: socket.handshake.headers
                     handshake: socket.handshake
-                async.each io.inbound.middleware, (callback, next) ->
+                    action: name
+                async.eachSeries io.inbound.middleware, (callback, next) ->
                     callback data, context, next
                 , (error) ->
                     return io.error error if error? and io.error?
