@@ -25,7 +25,9 @@ createIO = (socket, options, type) ->
     io.outbound.shortcuts ?= []
     for route in io.outbound.shortcuts
         do (route) ->
-            io[route] = (data) ->
+            io[route] = (data, context) ->
+                if context?
+                    data._messageId = context._messageId
                 bone.log "Outbound: [#{source}:#{route}]" if bone.log?
                 socket.emit "#{source}:#{route}", data
     return io if type is 'all'
@@ -40,6 +42,8 @@ createIO = (socket, options, type) ->
                     headers: socket.handshake.headers
                     handshake: socket.handshake
                     action: name
+                    _messageId: data._messageId
+                delete data._messageId
                 async.eachSeries io.inbound.middleware, (callback, next) ->
                     callback data, context, next
                 , (error) ->

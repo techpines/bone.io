@@ -6,7 +6,6 @@ id = 0
 initView = (root, view, options) ->
     $root = $(root)
     boneView = {}
-    boneView.io = bone.io
     boneView.id = id += 1
     boneView.data = ->
         $root.data.apply $root, arguments
@@ -29,7 +28,20 @@ initView = (root, view, options) ->
 
 # Creates a view based on the given CSS selector
 bone.view = (selector, options) ->
-    view = (selector) ->
+    view = (subSelector) ->
+        if 'string' is typeof subSelector
+            combinedSelector = "#{selector}#{subSelector}"
+            return bone.view combinedSelector, options
+        else
+            id = subSelector
+            for element in $(selector)
+                $element = $(element)
+                boneView = $element.data('boneView')
+                unless boneView?
+                    boneView = initView element, this, options
+                    $element.data 'boneView', boneView 
+                if id is boneView.id
+                    return boneView
         
     options.selector = selector
     events = options.events

@@ -17,7 +17,9 @@ io.Listings = io('listings', {
     // Incoming data route
     inbound: {
         results: function(listings, context) {
-            view.SearchContainer.refresh(listings);
+            var viewId = context.view.id;
+            console.log('here is the view id' + context.view.id);
+            view.SearchContainer(viewId).refresh(listings);
         }
     }
 });
@@ -66,10 +68,11 @@ view.SearchContainer = view('.search-container', {
 
     // Triggers a search
     search: function(event) {
+        console.log('search from view ' + this.id)
         fragment = this.$('input.search').val();
         if (fragment.length == 0) {
             return this.refresh({listings: []});
         }
-        io.Listings.search(fragment);
+        io.Listings.search(fragment, {view: this});
     }
 });

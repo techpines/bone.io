@@ -48,7 +48,11 @@ bone.async.eachSeries = function(arr, iterator, callback) {
   return iterate();
 };
 
-var adapters;
+var adapters, contextStore, messageId;
+
+messageId = 0;
+
+contextStore = {};
 
 bone.io = function(source, options) {
   return adapters[options.adapter](source, options);
@@ -90,6 +94,8 @@ adapters['socket.io'] = function(source, options) {
       if (bone.log != null) {
         bone.log("Outbound: [" + source + ":" + route + "]", data);
       }
+      data._messageId = messageId += 1;
+      contextStore[data._messageId] = context;
       return io.socket.emit("" + source + ":" + route, data);
     };
   };
@@ -105,7 +111,13 @@ adapters['socket.io'] = function(source, options) {
       if (bone.log != null) {
         bone.log("Inbound: [" + source + ":" + name + "]", data);
       }
-      context = {};
+      context = contextStore[data._messageId];
+      delete contextStore[data._messageId];
+      if (context == null) {
+        context = {};
+      }
+      context.route = name;
+      context.data = data;
       return bone.async.eachSeries(io.inbound.middleware, function(callback, next) {
         return callback(data, context, next);
       }, function(error) {
@@ -266,8 +278,8 @@ bone.History = (function() {
       handler = _ref[_i];
       if (handler.route.test(fragment)) {
         args = handler.route.exec(fragment).slice(1);
-        if (bone.log) {
-          console.log("Route: [" + handler.route + ":" + fragment + "]", args);
+        if (bone.log != null) {
+          bone.log("Route: [" + handler.route + ":" + fragment + "]", args);
         }
         bone.async.eachSeries(handler.router.middleware, function(callback, next) {
           return callback.apply(handler.router, [fragment, next]);
@@ -329,14 +341,16 @@ bone.History = (function() {
 
 })();
 
-var initView;
+var id, initView;
+
+id = 0;
 
 initView = function(root, view, options) {
   var $root, action, boneView, name, _fn;
 
   $root = $(root);
   boneView = {};
-  boneView.io = bone.io;
+  boneView.id = id += 1;
   boneView.data = function() {
     return $root.data.apply($root, arguments);
   };
@@ -345,7 +359,6 @@ initView = function(root, view, options) {
   };
   boneView.el = root;
   boneView.$el = $root;
-  console.log(boneView);
   _fn = function(name, action) {
     return boneView[name] = function() {
       var message;
@@ -374,7 +387,29 @@ initView = function(root, view, options) {
 bone.view = function(selector, options) {
   var action, eventSelector, events, functionName, name, view, _fn, _fn1;
 
-  view = {};
+  view = function(subSelector) {
+    var $element, boneView, combinedSelector, element, _i, _len, _ref;
+
+    if ('string' === typeof subSelector) {
+      combinedSelector = "" + selector + subSelector;
+      return bone.view(combinedSelector, options);
+    } else {
+      id = subSelector;
+      _ref = $(selector);
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        element = _ref[_i];
+        $element = $(element);
+        boneView = $element.data('boneView');
+        if (boneView == null) {
+          boneView = initView(element, this, options);
+          $element.data('boneView', boneView);
+        }
+        if (id === boneView.id) {
+          return boneView;
+        }
+      }
+    }
+  };
   options.selector = selector;
   events = options.events;
   _fn = function(eventSelector, functionName) {
