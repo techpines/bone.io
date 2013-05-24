@@ -15,18 +15,18 @@ What does VIO mean?
 
 #### Desktop
 
-Internet Explorer 6+
-Safari 3+
-Google Chrome 4+
-Firefox 3+
-Opera 10.61+
+* Internet Explorer 6+
+* Safari 3+
+* Google Chrome 4+
+* Firefox 3+
+* Opera 10.61+
 
 #### Mobile
 
-iPhone Safari
-iPad Safari
-Android WebKit
-WebOs WebKit
+* iPhone Safari
+* iPad Safari
+* Android WebKit
+* WebOs WebKit
 
 
 # Getting Started
