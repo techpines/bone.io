@@ -11,6 +11,23 @@ What does VIO mean?
 * Input  - Data entering the browser or server.
 * Output - Data leaving the browser or server.
 
+### Browser Support
+
+#### Desktop
+
+Internet Explorer 6+
+Safari 3+
+Google Chrome 4+
+Firefox 3+
+Opera 10.61+
+
+#### Mobile
+
+iPhone Safari
+iPad Safari
+Android WebKit
+WebOs WebKit
+
 
 # Getting Started
 
@@ -79,10 +96,10 @@ bone.view.DataRow = bone.view('tr.data-row', {
 
 Similar to backbone.js, views have a few handy properties attached to `this`:
 
-* `el` - The dom element for the current action.
-* `$el` - The jquery element for the current action.
-* `$` - Short hand for `this.$el.find`, because scoping is good.
-* `data` - Store and retrieve data on the element shortcut for `$this.$el.data`.
+* `this.el` - The dom element for the current action.
+* `this.$el` - The jquery element for the current action.
+* `this.$` - Short hand for `this.$el.find`, because scoping is good.
+* `this.data` - Store and retrieve data on the element shortcut for `$this.$el.data`.
 
 # IO (Input/Output)
 

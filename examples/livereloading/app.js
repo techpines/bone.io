@@ -18,7 +18,7 @@ bone.io.LiveReload = bone.io('live-reload', {
     }
 });
 
-fs.watchFile('./style.css', function() {
+fs.watch(pathutil.resolve(__dirname + '/style.css'), function() {
     var LiveReload = bone.io.LiveReload;
     LiveReload.cssChanged(fs.readFileSync('./style.css', 'utf8'));    
 });

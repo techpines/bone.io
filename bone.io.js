@@ -351,6 +351,10 @@ initView = function(root, view, options) {
   $root = $(root);
   boneView = {};
   boneView.id = id += 1;
+  $root.attr('data-bone-id', id);
+  console.log('new view initialized');
+  console.log($root);
+  console.log(boneView.id);
   boneView.data = function() {
     return $root.data.apply($root, arguments);
   };
