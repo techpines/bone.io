@@ -103,9 +103,36 @@ Similar to backbone.js, views have a few handy properties attached to `this`:
 
 # IO (Input/Output)
 
-IO is a crucial part of any realtime app, and for bone.io the following diagram illustrates the basic architecture:
+IO modules have the same api in both the browser and node.  The following diagram shows the architecture that bone.io is trying to replicate.
 
 ![bone.io](http://cdn.techpines.io/bone.io-io-architecture-github.png)
+
+### In the Abstract
+
+Abstractly, each individual IO module is independent from one another, and has the same structure.  We model inbound data routes and outbound data routes separately.  This separation of concerns is a key feature of the framework.
+
+```js
+bone.io 'eventspace`, {
+
+  inbound: {
+    middleware: [
+      ...
+    ],
+    route: function(data, context) {
+      ...
+    }
+  },
+
+  outbound: {
+    middleware: [
+      ...
+    ],
+    route: function(data, context) {
+      ...
+    }
+  }
+}
+```
 
 ### In the Browser
 

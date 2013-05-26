@@ -4,6 +4,6 @@ try {
 } catch(error) {
     // This is just for dev, coffee script is not a hard dependency
     require('coffee-script');
-    module.exports = require('./lib/server');
+    module.exports = require('./lib/node');
 }
 
