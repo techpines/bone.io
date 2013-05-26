@@ -112,7 +112,7 @@ IO modules have the same api in both the browser and node.  The following diagra
 Abstractly, each individual IO module is independent from one another, and has the same structure.  We model inbound data routes and outbound data routes separately.  This separation of concerns is a key feature of the framework.
 
 ```js
-bone.io 'eventspace`, {
+bone.io.Module = bone.io('namespace`, {
 
   inbound: {
     middleware: [
@@ -131,6 +131,37 @@ bone.io 'eventspace`, {
       ...
     }
   }
+});
+```
+
+* `Module` - IO modules are attached to `bone.io` as a best practice for easy access.
+* `namespace` - Is a unique namespace for the given IO Module and Server/Browser combination.
+* `inbound` - Is the configuration for inbound data routes.
+* `outbound` - Is the outbound data routes.
+* `inbound:middleware` - Is an array of middleware functions executed in series.
+* `outbound:middleware` - Is an array of middleware functions executed in series.
+* `inbound:[route]` - Inbound data route.
+* `outbound:[route]` - Outbound data route.
+
+#### Data Routes
+
+Data routes have the following signature:
+
+```js
+  route: function(data, context) {
+    ...
+  }
+```
+
+The `data` variable is the data delivered from either the browser or node.  The `context` gives you contextual information about the data route.  Context might be a session or the view that initiated the route, or anything else that will help us use the data correctly.
+
+#### Middleware
+
+Middleware function have the following signature:
+
+```js
+function(data, context, next) {
+  ...
 }
 ```
 
