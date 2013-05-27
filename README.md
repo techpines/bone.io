@@ -188,22 +188,11 @@ var app = require('express')(),
     io = require('socket.io').listen(server);
 ```
 
-This example uses express 3.0, and socket.io 0.9.14.  The first line sets up an express app.  The second line creates an HTTP server, and the third line creates a socket.io server bound to our HTTP server. 
-
 Then we configure bone.io, with the socket.io server:
 
 ```js
 var bone = require('bone.io');
 bone.set('config', {server: io});
-```
-
-Now we can setup our IO module:
-
-```js
-bone.io.Search = bone.io('search', {
-
-
-});
 ```
 
 # Router

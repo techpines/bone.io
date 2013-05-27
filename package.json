@@ -1,6 +1,6 @@
 {
     "name": "bone.io",
-    "version": "0.8.1",
+    "version": "0.8.2",
     "main": "./switch.js",
     "browser": "./bone.io.js",
     "dependencies": {
@@ -21,6 +21,9 @@
     "scripts": {
         "test": "./node_modules/mocha/bin/mocha test/test.coffee",
         "build": "./node_modules/grunt-cli/bin/grunt --gruntfile ./grunt.coffee",
-        "dev": "./node_modules/grunt-cli/bin/grunt --gruntfile ./grunt.coffee dev"
+        "dev": "./node_modules/grunt-cli/bin/grunt --gruntfile ./grunt.coffee dev",
+        "compile": "./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/",
+        "prepublish": "echo $(pwd) > /tmp/.pwd; ./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/;",
+        "postpublish": "rm -rf $(cat /tmp/.pwd)/compiled"
     }
 }
