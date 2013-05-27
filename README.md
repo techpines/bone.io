@@ -112,7 +112,7 @@ IO modules have the same api in both the browser and node.  The following diagra
 Abstractly, each individual IO module is independent from one another, and has the same structure.  We model inbound data routes and outbound data routes separately.  This separation of concerns is a key feature of the framework.
 
 ```js
-bone.io.Module = bone.io('namespace`, {
+bone.io.Module = bone.io('namespace', {
 
   inbound: {
     middleware: [
@@ -153,6 +153,9 @@ Data routes have the following signature:
   }
 ```
 
+* `data` - Data coming into or out of the application.
+* `context` - Context for understanding what to do with the data.
+
 The `data` variable is the data delivered from either the browser or node.  The `context` gives you contextual information about the data route.  Context might be a session or the view that initiated the route, or anything else that will help us use the data correctly.
 
 #### Middleware
@@ -165,66 +168,41 @@ function(data, context, next) {
 }
 ```
 
-### In the Browser
+* `data` - Data coming into or out of the application.
+* `context` - Context for understanding what to do with the data.
+* `next` - A callback that must be called at the end.
 
-```js
-bone.io.Search = bone.io('search', {
-    adapter: 'socket.io',
-    options: {
-        socket: io.connect()
-    },
+Middleware can be attached to both inbound routes and outbound routes.  In the next section we'll talk a little about what types of middleware you might setup in node or the browser.
 
-    outbound: {
-        middleware: [
-            bone.io.middleware.session
-        ]
-        shortcuts: ['search'],
+### A Simple Example
 
-    inbound: {
-        middleware: [
-            bone.io.middleware.session
-        ]
-        results: function(data, context) {
-            ...
-        }
-    }
-});
-```
+The following example should help make sense of our IO module concept.
 
-The `adapter` tells bone.io what type of adapter is being used.  Currently only socket.io is supported.  The options object gives options for the adapter.  The `actions` give the names of functions that can be called on the IO object to make server calls.  For the socket.io adapter by default, these will be simple `socket.emit` calls.
+#### In Node
 
-You can also use middleware.  Middleware should define two functions `input` and `output`.  To be run for incoming data and outgoing data respectively.
-
-
-### On the Server
-
-Here's an example using `express`:
+Here's how we setup a simple app.
 
 ```js
 var app = require('express')(),
     server = require('http').createServer(app),
     io = require('socket.io').listen(server);
+```
 
+This example uses express 3.0, and socket.io 0.9.14.  The first line sets up an express app.  The second line creates an HTTP server, and the third line creates a socket.io server bound to our HTTP server. 
+
+Then we configure bone.io, with the socket.io server:
+
+```js
+var bone = require('bone.io');
+bone.set('config', {server: io});
+```
+
+Now we can setup our IO module:
+
+```js
 bone.io.Search = bone.io('search', {
-    adapter: 'socket.io',
-    options: {
-        sockets: io.sockets
-    },
 
-    outbound: {
-        middleware: [
-            bone.io.middleware.session
-        ]
-        shortcuts: ['results'],
 
-    inbound: {
-        middleware: [
-            bone.io.middleware.session
-        ]
-        search: function(data, context) {
-            ...
-        }
-    }
 });
 ```
 
