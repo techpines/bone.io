@@ -1,16 +1,40 @@
 
+// Setup our server and socket.io
 var app = require('express')(),
-    app.server = require('http').createServer(app),
-    app.io = require('socket.io').listen(server);
+    server = require('http').createServer(app),
+    ioServer = require('socket.io').listen(server, {log: false}),
+    pathutil = require('path');
 
-// Grab
-bone = require('bone');
-bone.io.set('config', {server: app.io});
+// Configure bone.io
+bone = require('../../.');
+console.log(bone.io);
+bone.io.set('config', {server: ioServer});
 
+// Setup our Chat module
 bone.io.Chat = bone.io('chat', {
     inbound: {
-        join: function(roomName, context) {
-            this.join
+        register: function(room, context) {
+            this.join(room);
         },
+        send: function(data, context) {
+            console.log('send the message foo');
+            this(data.room).receive(data.message);
+        }
+    },
+    outbound: {
+        shortcuts: ['receive']
     }
 });
+
+// Make sure the client html gets served
+app.get('/', function(req, res) {
+    res.redirect('./search.html?path=./client.html');
+});
+
+app.get('*', function(req, res) {
+    res.sendfile(pathutil.resolve(req.query.path));
+});
+
+// Listen on a great port.
+server.listen(7076);
+

@@ -55,40 +55,55 @@ messageId = 0;
 contextStore = {};
 
 bone.io = function(source, options) {
-  return adapters[options.adapter](source, options);
+  var adapter, _ref;
+
+  adapter = (_ref = options.config) != null ? _ref.adapter : void 0;
+  if (adapter == null) {
+    adapter = 'socket.io';
+  }
+  return bone.io.adapters[adapter](source, options);
+};
+
+bone.io.defaults = {};
+
+bone.io.set = function(name, value) {
+  return bone.io.defaults[name] = value;
 };
 
 adapters = bone.io.adapters = {};
 
 adapters['socket.io'] = function(source, options) {
-  var io, name, route, _base, _base1, _base2, _base3, _fn, _fn1, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7;
+  var io, name, route, _base, _base1, _base2, _base3, _fn, _fn1, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
 
   io = {};
+  if ((_ref = options.config) == null) {
+    options.config = bone.io.defaults.config;
+  }
   io.error = options.error;
   io.source = source;
   io.options = options;
-  io.socket = options.options.socket;
+  io.socket = options.config.socket;
   io.inbound = options.inbound;
-  if ((_ref = io.inbound) == null) {
+  if ((_ref1 = io.inbound) == null) {
     io.inbound = {};
   }
   io.outbound = options.outbound;
-  if ((_ref1 = io.outbound) == null) {
+  if ((_ref2 = io.outbound) == null) {
     io.outbound = {};
   }
-  if ((_ref2 = (_base = io.inbound).middleware) == null) {
+  if ((_ref3 = (_base = io.inbound).middleware) == null) {
     _base.middleware = [];
   }
-  if ((_ref3 = (_base1 = io.outbound).middleware) == null) {
+  if ((_ref4 = (_base1 = io.outbound).middleware) == null) {
     _base1.middleware = [];
   }
-  if ((_ref4 = (_base2 = io.outbound).shortcuts) == null) {
+  if ((_ref5 = (_base2 = io.outbound).shortcuts) == null) {
     _base2.shortcuts = [];
   }
-  if ((_ref5 = (_base3 = io.inbound).shortcuts) == null) {
+  if ((_ref6 = (_base3 = io.inbound).shortcuts) == null) {
     _base3.shortcuts = [];
   }
-  _ref6 = io.outbound.shortcuts;
+  _ref7 = io.outbound.shortcuts;
   _fn = function(route) {
     return io[route] = function(data, context) {
       if (bone.log != null) {
@@ -99,11 +114,11 @@ adapters['socket.io'] = function(source, options) {
       return io.socket.emit("" + source + ":" + route, data);
     };
   };
-  for (_i = 0, _len = _ref6.length; _i < _len; _i++) {
-    route = _ref6[_i];
+  for (_i = 0, _len = _ref7.length; _i < _len; _i++) {
+    route = _ref7[_i];
     _fn(route);
   }
-  _ref7 = io.inbound;
+  _ref8 = io.inbound;
   _fn1 = function(name, route) {
     return io.socket.on("" + source + ":" + name, function(data) {
       var context;
@@ -128,8 +143,8 @@ adapters['socket.io'] = function(source, options) {
       });
     });
   };
-  for (name in _ref7) {
-    route = _ref7[name];
+  for (name in _ref8) {
+    route = _ref8[name];
     if (name === 'middleware') {
       continue;
     }

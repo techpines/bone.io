@@ -3,16 +3,24 @@ messageId = 0
 contextStore = {}
 
 bone.io = (source, options) ->
-    adapters[options.adapter] source, options
+    adapter = options.config?.adapter
+    adapter ?= 'socket.io'
+    bone.io.adapters[adapter] source, options
+
+bone.io.defaults = {}
+
+bone.io.set = (name, value) ->
+    bone.io.defaults[name] = value
 
 adapters = bone.io.adapters = {}
 
 adapters['socket.io'] = (source, options) ->
     io = {}
+    options.config ?= bone.io.defaults.config
     io.error = options.error
     io.source = source
     io.options = options
-    io.socket = options.options.socket
+    io.socket = options.config.socket
     io.inbound = options.inbound
     io.inbound ?= {}
     io.outbound = options.outbound
