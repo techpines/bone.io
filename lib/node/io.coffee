@@ -2,7 +2,6 @@
 async = require 'async'
 
 bone = {}
-console.log 'in the bone'
             
 bone.io = module.exports = (source, options) ->
     adapter = options.config?.adapter
@@ -23,12 +22,8 @@ createIO = (socket, options, type) ->
     io.sockets = options.config.server.sockets
     io.source = options.source
     if typeof socket is 'string' or typeof socket is 'number'
-        console.log 'we got here!'
         type = 'room'
-        console.log io.sockets
-        console.log io.socket
         io.socket = io.sockets.in "#{options.source}:#{socket.toString()}"
-        console.log io.socket
     source = options.source
     io.error = options.error
     io.options = options
@@ -40,19 +35,17 @@ createIO = (socket, options, type) ->
     io.outbound.middleware ?= []
     io.outbound.shortcuts ?= []
     io.join = (room) ->
-        console.log 'we are about to join ' + room
         io.socket.join "#{source}:#{room}"
+    io.leave = (room) ->
+        io.socket.leave "#{source}:#{room}"
     for route in io.outbound.shortcuts
         do (route) ->
             io[route] = (data, context) ->
                 if context?
                     data._messageId = context._messageId
                 bone.log "Outbound: [#{source}:#{route}]" if bone.log?
-                console.log io.socket
                 io.socket.emit "#{source}:#{route}", data
     return io if type is 'all' or type is 'room'
-    console.log 'binding events for our socket capn'
-    console.log type
     
     for name, route of io.inbound
         continue if name is 'middleware'

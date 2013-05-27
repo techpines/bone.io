@@ -106,6 +106,9 @@ adapters['socket.io'] = function(source, options) {
   _ref7 = io.outbound.shortcuts;
   _fn = function(route) {
     return io[route] = function(data, context) {
+      if (data == null) {
+        data = {};
+      }
       if (bone.log != null) {
         bone.log("Outbound: [" + source + ":" + route + "]", data);
       }
@@ -367,9 +370,6 @@ initView = function(root, view, options) {
   boneView = {};
   boneView.id = id += 1;
   $root.attr('data-bone-id', id);
-  console.log('new view initialized');
-  console.log($root);
-  console.log(boneView.id);
   boneView.data = function() {
     return $root.data.apply($root, arguments);
   };

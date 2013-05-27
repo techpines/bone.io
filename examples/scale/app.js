@@ -1,10 +1,11 @@
 
 var workers = function() {
+    console.log(process.pid);
     // Grab all of our dependencies
     var express = require('express'),
         app = express(),
         server = require('http').createServer(app),
-        io = require('socket.io').listen(server),
+        io = require('socket.io').listen(server, {log: false}),
         bone = require('../../.'),
         pathutil = require('path'),
         list = require('./data');
@@ -13,7 +14,7 @@ var workers = function() {
     io.set('transports', ['xhr-polling']);
     io.set('store', new RedisStore({redis: redis}));
 
-    bone.io.set('config', {sockets: io.sockets});
+    bone.io.set('config', {server: io});
 
     // Configure the listings data source
     // We are using the socket.io server adapter

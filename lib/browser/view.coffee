@@ -8,9 +8,6 @@ initView = (root, view, options) ->
     boneView = {}
     boneView.id = id += 1
     $root.attr 'data-bone-id', id
-    console.log 'new view initialized'
-    console.log $root
-    console.log boneView.id
     boneView.data = ->
         $root.data.apply $root, arguments
     boneView.$ = ->

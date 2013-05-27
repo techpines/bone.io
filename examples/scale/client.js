@@ -3,13 +3,10 @@ var socket = io.connect(),
     io   = bone.io,
     view = bone.view;
 
+bone.io.set('config', {socket: socket});
+
 // Configure our IO source
 io.Listings = io('listings', {
-    adapter: 'socket.io',
-    options: {
-        socket: socket
-    },
-    
     // Outgoing data route
     outbound: {
         shortcuts: ['search'],

@@ -34,6 +34,7 @@ adapters['socket.io'] = (source, options) ->
     for route in io.outbound.shortcuts
         do (route) ->
             io[route] = (data, context) ->
+                data ?= {}
                 bone.log "Outbound: [#{source}:#{route}]", data if bone.log?
                 data._messageId = messageId += 1
                 contextStore[data._messageId] = context
