@@ -158,6 +158,15 @@ Data routes have the following signature:
 
 The `data` variable is the data delivered from either the browser or node.  The `context` gives you contextual information about the data route.  Context might be a session or the view that initiated the route, or anything else that will help us use the data correctly.
 
+Inside a data route there are a few functions automatically assigned to `this`:
+
+* `this.join` - Allows a socket to subscribe to a channel.
+* `this.leave` - Allows a socket to unsubscribe to a channel.
+* `this.emit` - Emits a message to the socket or channel.
+* `this.volatile` - Emits a volatile message to the socket or channel.
+* `this(channel)` - Returns the given channel, must be a string.
+
+
 #### Middleware
 
 Middleware function have the following signature:
@@ -174,26 +183,6 @@ function(data, context, next) {
 
 Middleware can be attached to both inbound routes and outbound routes.  In the next section we'll talk a little about what types of middleware you might setup in node or the browser.
 
-### A Simple Example
-
-The following example should help make sense of our IO module concept.
-
-#### In Node
-
-Here's how we setup a simple app.
-
-```js
-var app = require('express')(),
-    server = require('http').createServer(app),
-    io = require('socket.io').listen(server);
-```
-
-Then we configure bone.io, with the socket.io server:
-
-```js
-var bone = require('bone.io');
-bone.set('config', {server: io});
-```
 
 # Router
 

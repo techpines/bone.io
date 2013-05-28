@@ -4,7 +4,8 @@
     "main": "./switch.js",
     "browser": "./bone.io.js",
     "dependencies": {
-        "async": "*"
+        "async": "*",
+        "connect": "*"
     },
    "devDependencies": {
         "express": "*",
