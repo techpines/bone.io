@@ -2,6 +2,8 @@ var bone, _ref;
 
 bone = {};
 
+bone.modules = {};
+
 if ((typeof module !== "undefined" && module !== null ? module.exports : void 0) != null) {
   module.exports = bone;
 } else {
@@ -287,7 +289,7 @@ bone.History = (function() {
   History.prototype.handlers = [];
 
   History.prototype.loadUrl = function(fragmentOverride) {
-    var args, fragment, handler, _i, _len, _ref, _results;
+    var args, fragment, handler, _base, _i, _len, _ref, _ref1, _results;
 
     fragment = this.fragment = this.getFragment(fragmentOverride);
     _ref = this.handlers;
@@ -298,6 +300,9 @@ bone.History = (function() {
         args = handler.route.exec(fragment).slice(1);
         if (bone.log != null) {
           bone.log("Route: [" + handler.route + ":" + fragment + "]", args);
+        }
+        if ((_ref1 = (_base = handler.router).middleware) == null) {
+          _base.middleware = [];
         }
         bone.async.eachSeries(handler.router.middleware, function(callback, next) {
           return callback.apply(handler.router, [fragment, next]);
@@ -400,6 +405,9 @@ initView = function(root, view, options) {
     }
     _fn(name, action);
   }
+  if (options.initialize != null) {
+    options.initialize.apply(boneView, []);
+  }
   return boneView;
 };
 
@@ -407,13 +415,13 @@ bone.view = function(selector, options) {
   var action, eventSelector, events, functionName, name, view, _fn, _fn1;
 
   view = function(subSelector) {
-    var $element, boneView, combinedSelector, element, _i, _len, _ref;
+    var $element, boneId, boneView, combinedSelector, element, _i, _len, _ref;
 
     if ('string' === typeof subSelector) {
       combinedSelector = "" + selector + subSelector;
       return bone.view(combinedSelector, options);
     } else {
-      id = subSelector;
+      boneId = subSelector;
       _ref = $(selector);
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         element = _ref[_i];
@@ -423,7 +431,7 @@ bone.view = function(selector, options) {
           boneView = initView(element, this, options);
           $element.data('boneView', boneView);
         }
-        if (id === boneView.id) {
+        if (boneId === boneView.id) {
           return boneView;
         }
       }
@@ -551,7 +559,9 @@ bone.router = function(options) {
         router: options
       });
     }
-    return options.initialize();
+    if (options.initialize != null) {
+      return options.initialize();
+    }
   });
 };
 

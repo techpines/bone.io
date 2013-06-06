@@ -23,4 +23,4 @@ bone.router = (options) ->
                 route: route
                 callback: options[action]
                 router: options
-        options.initialize()
+        options.initialize() if options.initialize?

@@ -4,6 +4,9 @@
 # Setup the bone object
 bone = {}
 
+# Setup modules
+bone.modules = {}
+
 # Attach bone to the window or exports
 if module?.exports?
     module.exports = bone

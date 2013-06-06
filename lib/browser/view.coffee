@@ -25,6 +25,8 @@ initView = (root, view, options) ->
                     message = "View: [#{options.selector}:#{name}]"
                     bone.log message, boneView.el, arguments
                 action.apply boneView, arguments
+    if options.initialize?
+        options.initialize.apply boneView, []
     boneView
 
 # Creates a view based on the given CSS selector
@@ -34,14 +36,14 @@ bone.view = (selector, options) ->
             combinedSelector = "#{selector}#{subSelector}"
             return bone.view combinedSelector, options
         else
-            id = subSelector
+            boneId = subSelector
             for element in $(selector)
                 $element = $(element)
                 boneView = $element.data('boneView')
                 unless boneView?
                     boneView = initView element, this, options
                     $element.data 'boneView', boneView 
-                if id is boneView.id
+                if boneId is boneView.id
                     return boneView
         
     options.selector = selector

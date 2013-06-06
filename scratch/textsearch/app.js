@@ -8,13 +8,11 @@ var express = require('express'),
     pathutil = require('path'),
     list = require('./data');
 
+bone.io.set('config', {server: io});
+
 // Configure the listings data source
 // We are using the socket.io server adapter
 bone.io.Listings = bone.io('listings', {
-    adapter: 'socket.io',
-    options: {
-        sockets: io.sockets
-    },
     outbound: {
         shortcuts: ['results'],
     },
@@ -41,9 +39,10 @@ bone.io.Listings = bone.io('listings', {
     }
 });
 
+app.use(bone.static());
 // Make sure the client html gets served
 app.get('/', function(req, res) {
-    res.redirect('./search.html?path=./client.html');
+    res.sendfile('./client.html');
 });
 
 app.get('*', function(req, res) {

@@ -140,6 +140,7 @@ class bone.History
             args = handler.route.exec(fragment).slice 1
             if bone.log?
                 bone.log "Route: [#{handler.route}:#{fragment}]", args
+            handler.router.middleware ?= []
             bone.async.eachSeries handler.router.middleware, (callback, next) ->
                 callback.apply handler.router, [fragment, next]
             , ->
