@@ -1,8 +1,8 @@
 ![bone.io](http://cdn.techpines.io/bone-io-github.png)
 
-# What is Bone.io?
+## What is Bone.io?
 
-Bone.io is a lightweight framework for building high performance, highly scalable single page HTML5 apps.  That uses WebSockets to communicate with backend services.
+Bone.io is a light-weight framework for building high performance realtime single page HTML5 apps.
 
 ### Browser Support
 
