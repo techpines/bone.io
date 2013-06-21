@@ -1,4 +1,3 @@
-
 ![bone.io](http://cdn.techpines.io/bone-io-github.png)
 
 # What is Bone.io?
@@ -41,7 +40,7 @@ Here are a list of the browser components:
 
 * [View](https://github.com/techpines/bone.io#view) - A view is based on a CSS selector and handles DOM events and DOM manipulations.
 * [IO](https://github.com/techpines/bone.io#io-inputoutput) - Input/Output handles bi-directional data communication with various endpoints.
-* [Router](https://github.com/techpines/bone.io#templates) - A router executes routes based on client side url changes.
+* [Router](https://github.com/techpines/bone.io#router) - A router executes routes based on client side url changes.
 * [Templates](https://github.com/techpines/bone.io#templates) - Use any templating system you like and plug into the bone.io templating infrastructure.
 
 ### On the Server
