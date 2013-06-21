@@ -3,13 +3,7 @@
 
 # What is Bone.io?
 
-Bone.io is a VIO framework for building high performance, highly scalable single page HTML5 apps.
-
-What does VIO mean?
-
-* View   - HTML5 Document 
-* Input  - Data entering the browser or server.
-* Output - Data leaving the browser or server.
+Bone.io is a lightweight framework for building high performance, highly scalable single page HTML5 apps.  That uses WebSockets to communicate with backend services.
 
 ### Browser Support
 
