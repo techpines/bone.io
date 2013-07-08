@@ -24,9 +24,23 @@ describe 'mounts', ->
                 $ = browser.window.$
                 bone.templates =
                     test: -> '<div id="template-start"></div>'
+                    testWithData: (data) ->
+                        '<div>' + data + '</div>'
+                $('body').append '<div id="generic-outlet"></div>'
                 done()
 
     it 'should work', ->
-        $('body').append '<div id="generic-outlet"></div>'
         bone.mount '#generic-outlet', 'test'
         $('#template-start').length.should.equal 1
+
+    it 'should work without refresh', ->
+        bone.mount '#generic-outlet', 'test'
+        $('#template-start').append('<div class="cheese">cheese</div>')
+        bone.mount '#generic-outlet', 'test'
+        $('.cheese').length.should.equal 1
+
+    it 'should work with refresh', ->
+        bone.mount '#generic-outlet', 'test'
+        $('#template-start').append('<div class="cheese">cheese</div>')
+        bone.mount '#generic-outlet', 'test', {refresh: true}
+        $('.cheese').length.should.equal 0

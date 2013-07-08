@@ -17,7 +17,7 @@
         "grunt-cli":"*",
         "mocha":"*",
         "chai":"*",
-        "zombie":"*"
+        "zombie":"1.4.1"
     },
     "scripts": {
         "test": "./node_modules/mocha/bin/mocha test/test.coffee",
