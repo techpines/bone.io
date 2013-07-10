@@ -34,13 +34,13 @@ describe 'view', ->
                 done()
         $('input').click()
 
-    it 'should ', (done) ->
-        contents = fs.readFileSync(pathutil.join(__dirname, 'modal-test.html'), 'utf8')
+    it 'should open modal when target id is specified in modal', (done) ->
+        contents = fs.readFileSync(pathutil.join(__dirname, 'modalHasIdTest.html'), 'utf8')
         $('body').html contents
         Modal = bone.view '.modal',
             open: ->
                 id = @$el.attr('id')
-                if id is 'first'
+                if id is 'second'
                     done()
                 else
                     throw new Error('Wrong modal opened.')
@@ -53,6 +53,41 @@ describe 'view', ->
                 Modal(id).open()
         $('.modal-controller').click()
 
+    it 'should no-op when target id is missing in modal', (done) ->
+        contents = fs.readFileSync(pathutil.join(__dirname, 'modalMissingIdTest.html'), 'utf8')
+        $('body').html contents
+        Modal = bone.view '.modal',
+            open: ->
+                throw new Error('Modal should not have opened.')
+        ModalController = bone.view '.modal-controller',
+            events:
+                'click': 'openModal'
+            openModal: ->
+                console.log('we clicked')
+                id = @$el.attr('data-target')
+                Modal(id).open()
+                setTimeout(done, 200);
+        $('.modal-controller').click()
 
 
+    it 'should ', (done) ->
+        contents = fs.readFileSync(pathutil.join(__dirname, 'genericButton.html'), 'utf8')
+        $('body').html contents
+        myButtonClicked = false;
+        MyButtonClass = bone.view '.myButton',
+            testNumber: 1,
+            buttonClassClicked: ->
+                console.log('class');
+                @testNumber.should.equal 1
+                myButtonClicked = true;
+        MyButtonId = bone.view '#buttonId',
+            testNumber: 2,
+            buttonIdClicked: ->
+                console.log('id');
+                @testNumber.should.equal 2
+                if myButtonClicked is true
+                    done();
+
+        MyButtonClass.buttonClassClicked();
+        MyButtonId.buttonIdClicked();
 
