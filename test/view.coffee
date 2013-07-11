@@ -68,7 +68,7 @@ describe 'view', ->
         $('.modal-controller').click()
 
 
-    it 'should work with two views on the same element', (done) ->
+    it 'should work when two views are created for same element', (done) ->
         contents = fs.readFileSync(pathutil.join(__dirname, 'genericButton.html'), 'utf8')
         $('body').html contents
         myButtonClicked = false
