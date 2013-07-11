@@ -9,13 +9,13 @@
     },
    "devDependencies": {
         "express": "*",
-        "coffee-script": "*",
+        "coffee-script": "1.6.2",
         "socket.io": "*",
         "grunt-contrib-coffee": "*",
         "grunt-contrib-uglify": "*",
         "grunt-contrib-watch": "*",
         "grunt-cli":"*",
-        "mocha":"*",
+        "mocha":"1.9.0",
         "chai":"*",
         "zombie":"1.4.1"
     },
