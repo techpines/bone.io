@@ -1,8 +1,7 @@
-bone = {}
-bone.config = exports.config = {}
+bone.config = {}
 
-bone.set = exports.set = (key, value) -> 
+bone.set = (key, value) -> 
 	bone.config[key] = value
 
-bone.get = exports.get = (key) ->
+bone.get = (key) ->
 	return bone.config[key]

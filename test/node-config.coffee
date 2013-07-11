@@ -2,7 +2,7 @@ bone = require('../.')
 should = require('chai').should()
 _ = require('underscore')
 
-describe 'config', ->
+describe 'node config', ->
 
    it 'should add key/value pair to config object', (done) ->
         bone.set('testNumber', 8)

@@ -48,7 +48,6 @@ describe 'view', ->
             events:
                 'click': 'openModal'
             openModal: ->
-                console.log('we clicked')
                 id = @$el.attr('data-target')
                 Modal(id).open()
         $('.modal-controller').click()
@@ -63,27 +62,24 @@ describe 'view', ->
             events:
                 'click': 'openModal'
             openModal: ->
-                console.log('we clicked')
                 id = @$el.attr('data-target')
                 Modal(id).open()
                 setTimeout(done, 200);
         $('.modal-controller').click()
 
 
-    it 'should ', (done) ->
+    it 'should work when two views are created for same element', (done) ->
         contents = fs.readFileSync(pathutil.join(__dirname, 'genericButton.html'), 'utf8')
         $('body').html contents
         myButtonClicked = false;
         MyButtonClass = bone.view '.myButton',
             testNumber: 1,
             buttonClassClicked: ->
-                console.log('class');
                 @testNumber.should.equal 1
                 myButtonClicked = true;
         MyButtonId = bone.view '#buttonId',
             testNumber: 2,
             buttonIdClicked: ->
-                console.log('id');
                 @testNumber.should.equal 2
                 if myButtonClicked is true
                     done();
