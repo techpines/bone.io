@@ -22,7 +22,7 @@ describe 'mounts', ->
             ], browser.injectScript, ->
                 bone = browser.window.bone
                 $ = browser.window.$
-                bone.templates =
+                browser.window.templates =
                     test: -> '<div id="template-start"></div>'
                     testWithData: (data) ->
                         '<div>' + data + '</div>'
@@ -30,6 +30,7 @@ describe 'mounts', ->
                 done()
 
     it 'should work', ->
+        bone.set('templates', browser.window.templates)
         bone.mount '#generic-outlet', 'test'
         $('#template-start').length.should.equal 1
 

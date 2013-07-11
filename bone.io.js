@@ -25,6 +25,9 @@ if (((_ref = window.console) != null ? _ref.log : void 0) != null) {
 bone.config = {};
 
 bone.set = function(key, value) {
+  if (key === 'templates') {
+    bone.templates = value;
+  }
   return bone.config[key] = value;
 };
 
