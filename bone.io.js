@@ -92,7 +92,7 @@ adapters['socket.io'] = function(source, options) {
 
   io = {};
   if ((_ref = options.config) == null) {
-    options.config = bone.io.defaults.config;
+    options.config = bone.io.get('io.options');
   }
   io.error = options.error;
   io.source = source;

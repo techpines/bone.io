@@ -70,7 +70,7 @@ createIO = (socket, options, type) ->
 adapters['socket.io'] = (source, options) ->
     options.source = source
     unless options.config?
-        options.config = bone.io.defaults.config
+        options.config = bone.get('io.options')
     unless options.config?.server?
         throw new Error 'The Bone.io IO "socket.io" adapter needs a socket.io server!  You must at least provide {config: server: io} from socket.io.  Cheers!'
     sockets = options.config.server.sockets

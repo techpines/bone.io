@@ -16,7 +16,7 @@ adapters = bone.io.adapters = {}
 
 adapters['socket.io'] = (source, options) ->
     io = {}
-    options.config ?= bone.io.defaults.config
+    options.config ?= bone.io.get('io.options')
     io.error = options.error
     io.source = source
     io.options = options
