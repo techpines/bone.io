@@ -1,13 +1,13 @@
 // Setup express, socket.io, and http server
 var app = require('express')();
 var server = require('http').createServer(app);
-var io = require('socket.io').listen(server, {log: true});
+var io = require('socket.io').listen(server, {log: false});
 var should = require('chai').should();
 var Browser = require('zombie');
-var browser = new Browser();
+var browser = new Browser({silent: true});
 var bone = require('../.');
 
-describe('sockets', function() {
+describe('io', function() {
     before(function(done) {
 		// Configure bone.io default IO options
 		bone.set('io.options', {
@@ -36,7 +36,6 @@ describe('sockets', function() {
             },
             inbound: {
                 register: function(data, context) {
-                    console.log('in register');
                     this.join(data);
                     this(data).message('this message should be received');
                     this('no-chat').message('this message should not be received');

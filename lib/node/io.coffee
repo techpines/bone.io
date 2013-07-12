@@ -16,8 +16,6 @@ bone.io.set = (name, value) ->
 
 adapters = bone.io.adapters = {}
 
-bone.log = console.log
-
 createIO = (socket, options, type) ->
     io = (socket) ->
         createIO socket, options
