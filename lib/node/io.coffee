@@ -2,6 +2,7 @@
 async = require 'async'
 
 bone = {}
+bone.get = require('./config').get
             
 bone.io = module.exports = (source, options) ->
     adapter = options.config?.adapter
@@ -14,6 +15,8 @@ bone.io.set = (name, value) ->
     bone.io.defaults[name] = value
 
 adapters = bone.io.adapters = {}
+
+bone.log = console.log
 
 createIO = (socket, options, type) ->
     io = (socket) ->
@@ -43,7 +46,7 @@ createIO = (socket, options, type) ->
             io[route] = (data, context) ->
                 if context?
                     data._messageId = context._messageId
-                bone.log "Outbound: [#{source}:#{route}]" if bone.log?
+                bone.log "Server-Outbound: [#{source}:#{route}]" if bone.log?
                 io.socket.emit "#{source}:#{route}", data
     return io if type is 'all' or type is 'room'
     
@@ -51,7 +54,7 @@ createIO = (socket, options, type) ->
         continue if name is 'middleware'
         do (name, route) ->
             io.socket.on "#{source}:#{name}", (data) ->
-                bone.log "Inbound: [#{source}:#{name}]" if bone.log?
+                bone.log "Server-Inbound: [#{source}:#{name}]" if bone.log?
                 context =
                     cookies: socket.handshake.cookies
                     socket: socket
