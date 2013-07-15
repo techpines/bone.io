@@ -32,7 +32,7 @@ describe('io', function() {
     it('should send message to client when client registers for room and message is sent to room', function(done) {
         var Server = bone.io('test1', {
             outbound: {
-                shortcuts: ['message']
+                routes: ['message']
             },
             inbound: {
                 register: function(data, context) {
@@ -45,7 +45,7 @@ describe('io', function() {
         });
         var Client = browser.window.bone.io('test1', {
             outbound: {
-                shortcuts: ['register']
+                routes: ['register']
             }, 
             inbound: {
                 message: function(data, context) {
@@ -61,7 +61,7 @@ describe('io', function() {
     it('should send message to client', function(done) {
         var testMessage = 'hello';
         var Server = bone.io('test2', {
-        	outbound:{shortcuts: ['shout']}
+        	outbound:{routes: ['shout']}
         });
         var Client = browser.window.bone.io('test2', {
         	inbound: {

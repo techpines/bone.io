@@ -27,11 +27,11 @@ adapters['socket.io'] = (source, options) ->
     io.outbound ?= {}
     io.inbound.middleware ?= []
     io.outbound.middleware ?= []
-    io.outbound.shortcuts ?= []
-    io.inbound.shortcuts ?= []
+    io.outbound.routes ?= []
+    io.inbound.routes ?= []
 
-    # Setup the outbound shortcuts
-    for route in io.outbound.shortcuts
+    # Setup the outbound routes
+    for route in io.outbound.routes
         do (route) ->
             io[route] = (data, context) ->
                 data ?= {}

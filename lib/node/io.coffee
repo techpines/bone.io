@@ -34,12 +34,12 @@ createIO = (socket, options, type) ->
     io.outbound ?= {}
     io.inbound.middleware ?= []
     io.outbound.middleware ?= []
-    io.outbound.shortcuts ?= []
+    io.outbound.routes ?= []
     io.join = (room) ->
         io.socket.join "#{source}:#{room}"
     io.leave = (room) ->
         io.socket.leave "#{source}:#{room}"
-    for route in io.outbound.shortcuts
+    for route in io.outbound.routes
         do (route) ->
             io[route] = (data, context) ->
                 if context?
