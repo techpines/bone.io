@@ -31,7 +31,9 @@ initView = (root, view, options) ->
 
 # Creates a view based on the given CSS selector
 bone.view = (selector, options) ->
-    view = (subSelector) ->
+    view = {}
+
+    view.$ = (subSelector) ->
         if 'string' is typeof subSelector
             combinedSelector = "#{selector}#{subSelector}"
             return bone.view combinedSelector, options
@@ -41,8 +43,8 @@ bone.view = (selector, options) ->
                 $element = $(element)
                 boneView = $element.data('boneView')
                 unless boneView?
-                    boneView = initView element, this, options
-                    $element.data 'boneView', boneView 
+                    boneView = initView element, view, options
+                    $element.data 'boneView', boneView
                 if boneId is boneView.id
                     return boneView
         

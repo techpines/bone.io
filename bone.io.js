@@ -427,7 +427,8 @@ initView = function(root, view, options) {
 bone.view = function(selector, options) {
   var action, eventSelector, events, functionName, name, view, _fn, _fn1;
 
-  view = function(subSelector) {
+  view = {};
+  view.$ = function(subSelector) {
     var $element, boneId, boneView, combinedSelector, element, _i, _len, _ref;
 
     if ('string' === typeof subSelector) {
@@ -441,7 +442,7 @@ bone.view = function(selector, options) {
         $element = $(element);
         boneView = $element.data('boneView');
         if (boneView == null) {
-          boneView = initView(element, this, options);
+          boneView = initView(element, view, options);
           $element.data('boneView', boneView);
         }
         if (boneId === boneView.id) {

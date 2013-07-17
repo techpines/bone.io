@@ -49,7 +49,7 @@ describe 'view', ->
                 'click': 'openModal'
             openModal: ->
                 id = @$el.attr('data-target')
-                Modal(id).open()
+                Modal.$(id).open()
         $('.modal-controller').click()
 
     it 'should no-op when target id is missing in modal', (done) ->
@@ -63,7 +63,7 @@ describe 'view', ->
                 'click': 'openModal'
             openModal: ->
                 id = @$el.attr('data-target')
-                Modal(id).open()
+                Modal.$(id).open()
                 setTimeout(done, 200)
         $('.modal-controller').click()
 
@@ -86,4 +86,22 @@ describe 'view', ->
 
         MyButtonClass.buttonClassClicked()
         MyButtonId.buttonIdClicked()
+
+    it 'should work with scoping', (done) ->
+        contents = fs.readFileSync(pathutil.join(__dirname, 'view-scoping.html'), 'utf8')
+        $('body').html contents
+        DataRow = bone.view 'tr',
+            addClass: (classToAdd) ->
+                @$el.addClass classToAdd
+        
+        DataRow.$(':nth-child(even)').addClass 'even'
+        $('tr:nth-child(even)').each (index, element) ->
+            console.log 'cheese wiz'
+            console.log element
+            $(element).hasClass('even').should.equal true
+        $('tr:nth-child(odd)').each (index, element) ->
+            console.log 'cheese wiz'
+            $(element).hasClass('even').should.equal false
+
+        done()
 
