@@ -96,11 +96,8 @@ describe 'view', ->
         
         DataRow.$(':nth-child(even)').addClass 'even'
         $('tr:nth-child(even)').each (index, element) ->
-            console.log 'cheese wiz'
-            console.log element
             $(element).hasClass('even').should.equal true
         $('tr:nth-child(odd)').each (index, element) ->
-            console.log 'cheese wiz'
             $(element).hasClass('even').should.equal false
 
         done()
