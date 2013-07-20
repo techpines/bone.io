@@ -33,6 +33,7 @@ initView = (root, view, options) ->
 bone.view = (selector, options) ->
     view = {}
 
+    # Allows for scoping based on selector or bone id
     view.$ = (subSelector) ->
         if 'string' is typeof subSelector
             combinedSelector = "#{selector}#{subSelector}"
