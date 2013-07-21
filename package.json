@@ -24,7 +24,7 @@
         "test": "./node_modules/mocha/bin/mocha test/test.coffee",
         "build": "./node_modules/grunt-cli/bin/grunt --gruntfile ./grunt.coffee",
         "dev": "./node_modules/grunt-cli/bin/grunt --gruntfile ./grunt.coffee dev",
-        "compile": "./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/"
+        "compile": "./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/",
         "prepublish": "echo $(pwd) > /tmp/.pwd; ./node_modules/coffee-script/bin/coffee -o compiled/ -c lib/;",
         "postpublish": "rm -rf $(cat /tmp/.pwd)/compiled"
     }

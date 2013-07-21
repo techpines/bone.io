@@ -16,10 +16,6 @@ else
 # Set the dom manipulation library, must be jquery
 bone.$ = window.$
 
-# Start the history when the dom is ready
-bone.$ ->
-  bone.history = new bone.History()
-
 # Default logging set to console.log
 if window.console?.log?
     bone.log = ->

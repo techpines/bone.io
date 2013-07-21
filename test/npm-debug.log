@@ -1,19 +1,19 @@
 0 info it worked if it ends with ok
-1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'test' ]
+1 verbose cli [ 'nodejs', '/usr/bin/npm', 'test' ]
 2 info using npm@1.1.65
 3 info using node@v0.8.14
-4 verbose read json /home/jnguyen/techpines/bone.io/test/package.json
-5 error Error: ENOENT, open '/home/jnguyen/techpines/bone.io/test/package.json'
+4 verbose read json /home/brad/techpines/bone.io/bone.io/test/package.json
+5 error Error: ENOENT, open '/home/brad/techpines/bone.io/bone.io/test/package.json'
 6 error If you need help, you may report this log at:
 6 error     <http://github.com/isaacs/npm/issues>
 6 error or email it to:
 6 error     <npm-@googlegroups.com>
-7 error System Linux 3.2.0-24-generic
-8 error command "/usr/bin/node" "/usr/bin/npm" "test"
-9 error cwd /home/jnguyen/techpines/bone.io/test
+7 error System Linux 3.2.0-45-generic
+8 error command "nodejs" "/usr/bin/npm" "test"
+9 error cwd /home/brad/techpines/bone.io/bone.io/test
 10 error node -v v0.8.14
 11 error npm -v 1.1.65
-12 error path /home/jnguyen/techpines/bone.io/test/package.json
+12 error path /home/brad/techpines/bone.io/bone.io/test/package.json
 13 error code ENOENT
 14 error errno 34
 15 verbose exit [ 34, true ]

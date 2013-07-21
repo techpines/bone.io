@@ -15,12 +15,24 @@ routeToRegex = (route) ->
      new RegExp("^" + route + "$")
     
 bone.router = (options) ->
+    bone.router.handlers ?= []
     $ ->
         for route, action of options.routes
             continue if route is 'routes'
             route = routeToRegex route
-            bone.history.handlers.push
+            bone.router.handlers.push
                 route: route
                 callback: options[action]
                 router: options
         options.initialize() if options.initialize?
+
+bone.router.start = (options) ->
+    bone.$ ->
+        bone.history = new bone.History()
+        bone.history.handlers = bone.router.handlers
+        bone.history.start options
+
+bone.router.navigate = (route, options) ->
+    bone.history.navigate route, options
+
+

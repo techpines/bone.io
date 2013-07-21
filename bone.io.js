@@ -12,10 +12,6 @@ if ((typeof module !== "undefined" && module !== null ? module.exports : void 0)
 
 bone.$ = window.$;
 
-bone.$(function() {
-  return bone.history = new bone.History();
-});
-
 if (((_ref = window.console) != null ? _ref.log : void 0) != null) {
   bone.log = function() {
     return console.log.apply(console, arguments);
@@ -173,11 +169,17 @@ adapters['socket.io'] = function(source, options) {
 
 var extend, isExplorer, rootStripper, routeStripper, trailingSlash;
 
-extend = function(obj, source) {
-  var prop;
+extend = function(obj) {
+  var prop, source, _i, _len, _ref;
 
-  for (prop in source) {
-    obj[prop] = source[prop];
+  _ref = Array.prototype.slice.call(arguments, 1);
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    source = _ref[_i];
+    if (source) {
+      for (prop in source) {
+        obj[prop] = source[prop];
+      }
+    }
   }
   return obj;
 };
@@ -557,17 +559,22 @@ routeToRegex = function(route) {
 };
 
 bone.router = function(options) {
-  return $(function() {
-    var action, route, _ref;
+  var _base, _ref;
 
-    _ref = options.routes;
-    for (route in _ref) {
-      action = _ref[route];
+  if ((_ref = (_base = bone.router).handlers) == null) {
+    _base.handlers = [];
+  }
+  return $(function() {
+    var action, route, _ref1;
+
+    _ref1 = options.routes;
+    for (route in _ref1) {
+      action = _ref1[route];
       if (route === 'routes') {
         continue;
       }
       route = routeToRegex(route);
-      bone.history.handlers.push({
+      bone.router.handlers.push({
         route: route,
         callback: options[action],
         router: options
@@ -577,6 +584,18 @@ bone.router = function(options) {
       return options.initialize();
     }
   });
+};
+
+bone.router.start = function(options) {
+  return bone.$(function() {
+    bone.history = new bone.History();
+    bone.history.handlers = bone.router.handlers;
+    return bone.history.start(options);
+  });
+};
+
+bone.router.navigate = function(route, options) {
+  return bone.history.navigate(route, options);
 };
 
 var $;

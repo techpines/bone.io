@@ -8,9 +8,12 @@
 # Code is mostly borrowed from backbone, so Copyright Backbone.js
 
 # Define an extend function
-extend = (obj, source) ->
-  for prop of source
-    obj[prop] = source[prop]
+extend = (obj) ->
+  for source in Array.prototype.slice.call(arguments, 1)
+    if source
+      for prop of source
+        obj[prop] = source[prop]
+
   obj
 
 # Cached regex for stripping a leading hash/slash and trailing space.
