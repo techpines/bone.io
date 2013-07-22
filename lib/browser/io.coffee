@@ -51,6 +51,8 @@ adapters['socket.io'] = (source, options) ->
                 context ?= {}
                 context.route = name
                 context.data = data
+                context.namespace = source
+                context.socket = io.socket
                 bone.async.eachSeries io.inbound.middleware, (callback, next) ->
                     callback data, context, next
                 , (error) ->

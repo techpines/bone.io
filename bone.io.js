@@ -147,6 +147,8 @@ adapters['socket.io'] = function(source, options) {
       }
       context.route = name;
       context.data = data;
+      context.namespace = source;
+      context.socket = io.socket;
       return bone.async.eachSeries(io.inbound.middleware, function(callback, next) {
         return callback(data, context, next);
       }, function(error) {

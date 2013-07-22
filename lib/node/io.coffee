@@ -54,11 +54,12 @@ createIO = (socket, options, type) ->
             io.socket.on "#{source}:#{name}", (data) ->
                 bone.log "Server-Inbound: [#{source}:#{name}]" if bone.log?
                 context =
-                    cookies: socket.handshake.cookies
+                    route: name
+                    data: data
+                    namespace: source
                     socket: socket
                     headers: socket.handshake.headers
                     handshake: socket.handshake
-                    action: name
                     _messageId: data._messageId
                 delete data._messageId
                 async.eachSeries io.inbound.middleware, (callback, next) ->

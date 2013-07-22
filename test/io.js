@@ -2,6 +2,7 @@
 var app = require('express')();
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server, {log: false});
+var _ = require('underscore');
 var should = require('chai').should();
 var Browser = require('zombie');
 var browser = new Browser({silent: true});
@@ -36,6 +37,15 @@ describe('io', function() {
             },
             inbound: {
                 register: function(data, context) {
+                    var properties = [
+                        'route', 'data', 'namespace',
+                        'socket', 'headers', 'handshake'
+                    ]
+                    _.each(properties, function(property) {
+                        context.should.have.property(property);
+                    });
+
+            
                     this.join(data);
                     this(data).message('this message should be received');
                     this('no-chat').message('this message should not be received');
@@ -49,6 +59,13 @@ describe('io', function() {
             }, 
             inbound: {
                 message: function(data, context) {
+                    properties = [
+                        'route', 'data', 'namespace', 'socket',
+                    ]
+                    _.each(properties, function(property) {
+                        var type = typeof context[property]
+                        type.should.not.equal('undefined');
+                    });
                     data.should.equal('this message should be received');
                     done();
                 }
