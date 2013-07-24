@@ -1,9 +1,10 @@
 
--![bone.io](http://cdn.techpines.io/bone-io-github.png)
+![bone.io](http://cdn.techpines.io/bone-io-github.png)
 
-Checkout the official site: [bone.io](bone.io)
+Checkout the official site: 
 
-Or read the docs here on github.
+[http://bone.io](bone.io)
+
 
 ### Introduction
 
