@@ -1,10 +1,9 @@
 
+## Checkout the Official Site
+
+[bone.io](bone.io)
+
 ![bone.io](http://cdn.techpines.io/bone-io-github.png)
-
-## Checkout the official site
-
-[http://bone.io](bone.io)
-
 
 ### Introduction
 
