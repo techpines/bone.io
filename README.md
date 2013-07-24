@@ -1,5 +1,5 @@
 
-### Checout the __Official Site__
+### Checkout the Official Site
 
 [http://bone.io](bone.io)
 
