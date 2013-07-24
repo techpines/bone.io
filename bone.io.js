@@ -24,6 +24,11 @@ bone.set = function(key, value) {
   if (key === 'templates') {
     bone.templates = value;
   }
+  if (key === 'log') {
+    if (value === false) {
+      bone.log = void 0;
+    }
+  }
   return bone.config[key] = value;
 };
 
@@ -398,6 +403,7 @@ initView = function(root, view, options) {
   boneView.$ = function() {
     return $root.find.apply($root, arguments);
   };
+  boneView.templates = bone.templates;
   boneView.el = root;
   boneView.$el = $root;
   _fn = function(name, action) {

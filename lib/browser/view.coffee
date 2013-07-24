@@ -12,6 +12,7 @@ initView = (root, view, options) ->
         $root.data.apply $root, arguments
     boneView.$ = ->
         $root.find.apply $root, arguments
+    boneView.templates = bone.templates
     boneView.el = root
     boneView.$el = $root
     for name, action of options
