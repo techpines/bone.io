@@ -1,5 +1,5 @@
 
-## __Official Site__:
+### Checout the __Official Site__
 
 [http://bone.io](bone.io)
 
