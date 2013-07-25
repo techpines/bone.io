@@ -1,7 +1,7 @@
 
 ### Checkout the Official Site
 
-[http://bone.io](bone.io)
+[http://bone.io](http://bone.io)
 
 ![bone.io](http://cdn.techpines.io/bone-io-github.png)
 
