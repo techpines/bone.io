@@ -1,4 +1,3 @@
-
 ### Checkout the Official Site
 
 [http://bone.io](http://bone.io)
@@ -172,7 +171,7 @@ The server environment is slightly different, as an IO module on the server migh
 The `context` object will have the following parameters:
 
 * `route` - The name of the current route.
-* `data` - The data object sent from the server.
+* `data` - The data object sent from the browser.
 * `namespace` - The namespace for the module.
 * `socket` - The socket.io socket object.
 * `headers` - The HTTP headers sent with the initial handshake.
