@@ -1,6 +1,6 @@
 # Bone.io: Realtime HTML5 Framework
 
-<img align="right" src="http://bone.io/static/img/skeleton-no-shirt-21fba8a2563ed3c11031360301701e9d.png">
+<a href="http://bone.io"><img align="right" src="http://bone.io/static/img/skeleton-no-shirt-21fba8a2563ed3c11031360301701e9d.png"></a>
 
 ### Documentation
 
