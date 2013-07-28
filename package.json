@@ -7,7 +7,23 @@
         "async": "*",
         "connect": "*"
     },
-   "devDependencies": {
+    "keywords": ["realtime", "web", "html5", "framework", "bone.io", "bone man", "skeleton", "mobile", "socket.io", "badass"],
+    "homepage": "http://bone.io",
+    "author": "Brad Carleton <brad@techpines.com>",
+    "repository": "git://github.com/techpines/express.io",
+    "contributors": [{
+        "name": "Brad Carleton",
+        "email": "brad@techpines.com",
+        "url": "http://www.techpines.com"
+    }, {
+        "name": "Benjamin Adams",
+        "email": "Armastevs@gmail.com",
+        "url": "http://dudelol.com"
+    }, {
+        "name": "Justin Nguyen",
+        "email": "theamazingjustin@gmail.com"
+    }],
+    "devDependencies": {
         "express": "*",
         "coffee-script": "1.6.2",
         "socket.io": "*",
