@@ -1,4 +1,3 @@
-
 # Bone.io: Realtime HTML5 Framework
 
 <img align="right" height="260" src="http://bone.io/static/img/skeleton-no-shirt-21fba8a2563ed3c11031360301701e9d.png">
