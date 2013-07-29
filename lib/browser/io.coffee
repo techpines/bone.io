@@ -34,24 +34,28 @@ adapters['socket.io'] = (source, options) ->
     for route in io.outbound.routes
         do (route) ->
             io[route] = (data, context) ->
-                data ?= {}
+                context ?= {}
                 bone.log "Outbound: [#{source}:#{route}]", data if bone.log?
-                data._messageId = messageId += 1
-                contextStore[data._messageId] = context
+                context.mid = messageId += 1
+                contextStore[context.mid] = context
                 bone.async.eachSeries io.outbound.middleware, (callback, next) ->
                     callback data, context, next
                 , (error) ->
                     return io.error error if error? and io.error?
-                    io.socket.emit "#{source}:#{route}", data
+                    io.socket.emit "#{source}:#{route}",
+                        mid: context.mid
+                        data: data
 
     # Setup the inbound routes
     for name, route of io.inbound
         continue if name is 'middleware'
         do (name, route) ->
-            io.socket.on "#{source}:#{name}", (data) ->
+            io.socket.on "#{source}:#{name}", (wrapper) ->
+                data = wrapper.data
+                mid = wrapper.mid
                 bone.log "Inbound: [#{source}:#{name}]", data if bone.log?
-                context = contextStore[data._messageId]
-                delete contextStore[data._messageId]
+                context = contextStore[mid]
+                delete contextStore[mid]
                 context ?= {}
                 context.route = name
                 context.data = data

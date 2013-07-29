@@ -122,21 +122,24 @@ adapters['socket.io'] = function(source, options) {
   _ref7 = io.outbound.routes;
   _fn = function(route) {
     return io[route] = function(data, context) {
-      if (data == null) {
-        data = {};
+      if (context == null) {
+        context = {};
       }
       if (bone.log != null) {
         bone.log("Outbound: [" + source + ":" + route + "]", data);
       }
-      data._messageId = messageId += 1;
-      contextStore[data._messageId] = context;
+      context.mid = messageId += 1;
+      contextStore[context.mid] = context;
       return bone.async.eachSeries(io.outbound.middleware, function(callback, next) {
         return callback(data, context, next);
       }, function(error) {
         if ((error != null) && (io.error != null)) {
           return io.error(error);
         }
-        return io.socket.emit("" + source + ":" + route, data);
+        return io.socket.emit("" + source + ":" + route, {
+          mid: context.mid,
+          data: data
+        });
       });
     };
   };
@@ -146,14 +149,16 @@ adapters['socket.io'] = function(source, options) {
   }
   _ref8 = io.inbound;
   _fn1 = function(name, route) {
-    return io.socket.on("" + source + ":" + name, function(data) {
-      var context;
+    return io.socket.on("" + source + ":" + name, function(wrapper) {
+      var context, data, mid;
 
+      data = wrapper.data;
+      mid = wrapper.mid;
       if (bone.log != null) {
         bone.log("Inbound: [" + source + ":" + name + "]", data);
       }
-      context = contextStore[data._messageId];
-      delete contextStore[data._messageId];
+      context = contextStore[mid];
+      delete contextStore[mid];
       if (context == null) {
         context = {};
       }

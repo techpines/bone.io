@@ -43,20 +43,23 @@ createIO = (socket, options, type) ->
     for route in io.outbound.routes
         do (route) ->
             io[route] = (data, context) ->
-                if context?
-                    data._messageId = context._messageId
+                context ?= {}
                 bone.log "Server-Outbound: [#{source}:#{route}]" if bone.log?
                 async.eachSeries io.outbound.middleware, (callback, next) ->
                     callback data, context, next
                 , (error) ->
                     return io.error error if error? and io.error?
-                    io.socket.emit "#{source}:#{route}", data
+                    io.socket.emit "#{source}:#{route}",
+                        data: data
+                        mid: context.mid
     return io if type is 'all' or type is 'room'
     
     for name, route of io.inbound
         continue if name is 'middleware'
         do (name, route) ->
-            io.socket.on "#{source}:#{name}", (data) ->
+            io.socket.on "#{source}:#{name}", (wrapper) ->
+                data = wrapper.data
+                mid = wrapper.mid
                 bone.log "Server-Inbound: [#{source}:#{name}]" if bone.log?
                 context =
                     route: name
@@ -65,8 +68,7 @@ createIO = (socket, options, type) ->
                     socket: socket
                     headers: socket.handshake.headers
                     handshake: socket.handshake
-                    _messageId: data._messageId
-                delete data._messageId
+                    mid: mid
                 async.eachSeries io.inbound.middleware, (callback, next) ->
                     callback data, context, next
                 , (error) ->
