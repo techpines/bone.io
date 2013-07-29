@@ -38,7 +38,11 @@ adapters['socket.io'] = (source, options) ->
                 bone.log "Outbound: [#{source}:#{route}]", data if bone.log?
                 data._messageId = messageId += 1
                 contextStore[data._messageId] = context
-                io.socket.emit "#{source}:#{route}", data
+                bone.async.eachSeries io.outbound.middleware, (callback, next) ->
+                    callback data, context, next
+                , (error) ->
+                    return io.error error if error? and io.error?
+                    io.socket.emit "#{source}:#{route}", data
 
     # Setup the inbound routes
     for name, route of io.inbound

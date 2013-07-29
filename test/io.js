@@ -47,8 +47,8 @@ describe('io', function() {
 
             
                     this.join(data);
-                    this(data).message('this message should be received');
-                    this('no-chat').message('this message should not be received');
+                    this.room(data).message('this message should be received');
+                    this.room('no-chat').message('this message should not be received');
                 }
             }
 

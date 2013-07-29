@@ -17,7 +17,8 @@ bone.io.set = (name, value) ->
 adapters = bone.io.adapters = {}
 
 createIO = (socket, options, type) ->
-    io = (socket) ->
+    io = {}
+    io.room = (socket) ->
         createIO socket, options
     io.socket = socket
     io.sockets = options.config.server.sockets
@@ -45,7 +46,11 @@ createIO = (socket, options, type) ->
                 if context?
                     data._messageId = context._messageId
                 bone.log "Server-Outbound: [#{source}:#{route}]" if bone.log?
-                io.socket.emit "#{source}:#{route}", data
+                async.eachSeries io.outbound.middleware, (callback, next) ->
+                    callback data, context, next
+                , (error) ->
+                    return io.error error if error? and io.error?
+                    io.socket.emit "#{source}:#{route}", data
     return io if type is 'all' or type is 'room'
     
     for name, route of io.inbound

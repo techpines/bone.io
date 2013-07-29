@@ -130,7 +130,14 @@ adapters['socket.io'] = function(source, options) {
       }
       data._messageId = messageId += 1;
       contextStore[data._messageId] = context;
-      return io.socket.emit("" + source + ":" + route, data);
+      return bone.async.eachSeries(io.outbound.middleware, function(callback, next) {
+        return callback(data, context, next);
+      }, function(error) {
+        if ((error != null) && (io.error != null)) {
+          return io.error(error);
+        }
+        return io.socket.emit("" + source + ":" + route, data);
+      });
     };
   };
   for (_i = 0, _len = _ref7.length; _i < _len; _i++) {
@@ -311,11 +318,10 @@ bone.History = (function() {
   History.prototype.handlers = [];
 
   History.prototype.loadUrl = function(fragmentOverride) {
-    var args, fragment, handler, _base, _i, _len, _ref, _ref1, _results;
+    var args, fragment, handler, _base, _i, _len, _ref, _ref1;
 
     fragment = this.fragment = this.getFragment(fragmentOverride);
     _ref = this.handlers;
-    _results = [];
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       handler = _ref[_i];
       if (handler.route.test(fragment)) {
@@ -326,17 +332,14 @@ bone.History = (function() {
         if ((_ref1 = (_base = handler.router).middleware) == null) {
           _base.middleware = [];
         }
-        bone.async.eachSeries(handler.router.middleware, function(callback, next) {
+        return bone.async.eachSeries(handler.router.middleware, function(callback, next) {
           return callback.apply(handler.router, [fragment, next]);
         }, function() {
           return handler.callback.apply(handler.router, args);
         });
         continue;
-      } else {
-        _results.push(void 0);
       }
     }
-    return _results;
   };
 
   History.prototype.navigate = function(fragment, options) {
