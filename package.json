@@ -3,6 +3,7 @@
     "version": "0.8.7",
     "main": "./switch.js",
     "browser": "./bone.io.js",
+    "description": "Bone.io is a lightweight framework for building high performance Realtime Single Page Apps.",
     "dependencies": {
         "async": "*",
         "connect": "*"
@@ -10,7 +11,7 @@
     "keywords": ["realtime", "web", "html5", "framework", "bone.io", "bone man", "skeleton", "mobile", "socket.io", "badass"],
     "homepage": "http://bone.io",
     "author": "Brad Carleton <brad@techpines.com>",
-    "repository": "git://github.com/techpines/express.io",
+    "repository": "git://github.com/techpines/bone.io",
     "contributors": [{
         "name": "Brad Carleton",
         "email": "brad@techpines.com",
