@@ -1,4 +1,6 @@
 
+# view.coffee - view test code
+
 should = require('chai').should()
 fs = require 'fs'
 pathutil = require 'path'
