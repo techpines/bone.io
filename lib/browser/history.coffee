@@ -144,11 +144,11 @@ class bone.History
             if bone.log?
                 bone.log "Route: [#{handler.route}:#{fragment}]", args
             handler.router.middleware ?= []
-            return bone.async.eachSeries handler.router.middleware, (callback, next) ->
+            bone.async.eachSeries handler.router.middleware, (callback, next) ->
                 callback.apply handler.router, [fragment, next]
             , ->
                 handler.callback.apply handler.router, args
-            continue
+            return true
   
   # Save a fragment into the hash history, or replace the URL state if the
   # 'replace' option is passed. You are responsible for properly URL-encoding

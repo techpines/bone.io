@@ -1,6 +1,6 @@
 {
     "name": "bone.io",
-    "version": "0.8.7",
+    "version": "0.8.8",
     "main": "./switch.js",
     "browser": "./bone.io.js",
     "description": "Bone.io is a lightweight framework for building high performance Realtime Single Page Apps.",

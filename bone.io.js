@@ -337,12 +337,12 @@ bone.History = (function() {
         if ((_ref1 = (_base = handler.router).middleware) == null) {
           _base.middleware = [];
         }
-        return bone.async.eachSeries(handler.router.middleware, function(callback, next) {
+        bone.async.eachSeries(handler.router.middleware, function(callback, next) {
           return callback.apply(handler.router, [fragment, next]);
         }, function() {
           return handler.callback.apply(handler.router, args);
         });
-        continue;
+        return true;
       }
     }
   };
