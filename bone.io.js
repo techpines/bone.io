@@ -447,7 +447,7 @@ bone.view = function(selector, options) {
 
   view = {};
   view.$ = function(subSelector) {
-    var $element, boneId, boneView, combinedSelector, element, _i, _len, _ref;
+    var $element, boneId, boneView, boneViews, combinedSelector, element, _i, _len, _ref;
 
     if ('string' === typeof subSelector) {
       combinedSelector = "" + selector + subSelector;
@@ -458,10 +458,15 @@ bone.view = function(selector, options) {
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         element = _ref[_i];
         $element = $(element);
-        boneView = $element.data('boneView');
+        boneViews = $(element).data('bone-views');
+        if (boneViews == null) {
+          boneViews = {};
+          $(element).data('bone-views', boneViews);
+        }
+        boneView = boneViews[selector];
         if (boneView == null) {
           boneView = initView(element, view, options);
-          $element.data('boneView', boneView);
+          $element.data('bone-views')[selector] = boneView;
         }
         if (boneId === boneView.id) {
           return boneView;
@@ -485,23 +490,28 @@ bone.view = function(selector, options) {
     action = options[functionName];
     return $(function() {
       return $('body').on(eventName, fullSelector, function(event) {
-        var boneView, message, root;
+        var boneView, boneViews, element, message;
 
-        root = $(event.currentTarget).parents(selector)[0];
-        if (root == null) {
-          root = event.currentTarget;
+        element = $(event.currentTarget).parents(selector)[0];
+        if (element == null) {
+          element = event.currentTarget;
         }
         if (bone.log != null) {
           message = "Interface: [" + fullSelector + ":" + eventName + "]";
-          bone.log(message, root);
+          bone.log(message, element);
         }
-        boneView = $(root).data('bone-view');
+        boneViews = $(element).data('bone-views');
+        if (boneViews == null) {
+          boneViews = {};
+          $(element).data('bone-views', boneViews);
+        }
+        boneView = boneViews[selector];
         if (boneView == null) {
-          boneView = initView(root, view, options);
-          $(root).data('bone-view', boneView);
+          boneView = initView(element, view, options);
+          $(element).data('bone-views')[selector] = boneView;
         }
         if ($.trim(selector) !== $.trim(fullSelector)) {
-          root = $(fullSelector).parents(selector)[0];
+          element = $(fullSelector).parents(selector)[0];
         }
         return action.call(boneView, event);
       });
@@ -524,12 +534,17 @@ bone.view = function(selector, options) {
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         element = _ref[_i];
         _results.push((function(element) {
-          var boneView, message;
+          var boneView, boneViews, message;
 
-          boneView = $(element).data('bone-view');
+          boneViews = $(element).data('bone-views');
+          if (boneViews == null) {
+            boneViews = {};
+            $(element).data('bone-views', boneViews);
+          }
+          boneView = boneViews[selector];
           if (boneView == null) {
             boneView = initView(element, view, options);
-            $(element).data('bone-view', boneView);
+            $(element).data('bone-views')[selector] = boneView;
           }
           if (bone.log != null) {
             message = "View: [" + selector + ":" + name + "]";

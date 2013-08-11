@@ -43,10 +43,14 @@ bone.view = (selector, options) ->
             boneId = subSelector
             for element in $(selector)
                 $element = $(element)
-                boneView = $element.data('boneView')
+                boneViews = $(element).data('bone-views')
+                unless boneViews?
+                    boneViews = {}
+                    $(element).data 'bone-views', boneViews
+                boneView = boneViews[selector]
                 unless boneView?
                     boneView = initView element, view, options
-                    $element.data 'boneView', boneView
+                    $element.data('bone-views')[selector] = boneView
                 if boneId is boneView.id
                     return boneView
         
@@ -64,18 +68,22 @@ bone.view = (selector, options) ->
             fullSelector += " #{subSelector}" if subSelector?
             action = options[functionName]
             $ -> $('body').on eventName, fullSelector, (event) ->
-                root = $(event.currentTarget).parents(selector)[0]
-                root ?= event.currentTarget
+                element = $(event.currentTarget).parents(selector)[0]
+                element ?= event.currentTarget
                 if bone.log?
                     message = "Interface: [#{fullSelector}:#{eventName}]"
-                    bone.log message, root
-                boneView = $(root).data 'bone-view'
+                    bone.log message, element
+                boneViews = $(element).data('bone-views')
+                unless boneViews?
+                    boneViews = {}
+                    $(element).data 'bone-views', boneViews
+                boneView = boneViews[selector]
                 unless boneView?
-                    boneView = initView root, view, options
-                    $(root).data 'bone-view', boneView
+                    boneView = initView element, view, options
+                    $(element).data('bone-views')[selector] = boneView
 
                 if $.trim(selector) isnt $.trim(fullSelector)
-                    root = $(fullSelector).parents(selector)[0]
+                    element = $(fullSelector).parents(selector)[0]
                 action.call boneView, event
 
     for name, action of options
@@ -88,10 +96,14 @@ bone.view = (selector, options) ->
                 args = arguments
                 for element in $(selector)
                     do (element) ->
-                        boneView = $(element).data 'bone-view'
+                        boneViews = $(element).data('bone-views')
+                        unless boneViews?
+                            boneViews = {}
+                            $(element).data 'bone-views', boneViews
+                        boneView = boneViews[selector]
                         unless boneView?
                             boneView = initView element, view, options
-                            $(element).data 'bone-view', boneView
+                            $(element).data('bone-views')[selector] = boneView
                         if bone.log?
                             message = "View: [#{selector}:#{name}]"
                             bone.log message, element, args
