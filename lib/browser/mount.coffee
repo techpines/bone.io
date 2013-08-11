@@ -23,9 +23,10 @@ bone.mount = (selector, templateName, options) ->
         sameTemplate = info.template is templateName
         sameData = info.data is data
         if sameTemplate and sameData and not refresh
-            return
+            return false
         $current.children().remove()
     $current.html templateString
     $current.data 'bone-mount',
         template: templateName
         data: data
+    return true

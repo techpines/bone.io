@@ -529,7 +529,7 @@ bone.view = function(selector, options) {
           boneView = $(element).data('bone-view');
           if (boneView == null) {
             boneView = initView(element, view, options);
-            $(element).data('bone-view');
+            $(element).data('bone-view', boneView);
           }
           if (bone.log != null) {
             message = "View: [" + selector + ":" + name + "]";
@@ -641,13 +641,14 @@ bone.mount = function(selector, templateName, options) {
     sameTemplate = info.template === templateName;
     sameData = info.data === data;
     if (sameTemplate && sameData && !refresh) {
-      return;
+      return false;
     }
     $current.children().remove();
   }
   $current.html(templateString);
-  return $current.data('bone-mount', {
+  $current.data('bone-mount', {
     template: templateName,
     data: data
   });
+  return true;
 };

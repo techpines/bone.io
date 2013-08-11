@@ -91,7 +91,7 @@ bone.view = (selector, options) ->
                         boneView = $(element).data 'bone-view'
                         unless boneView?
                             boneView = initView element, view, options
-                            $(element).data 'bone-view'
+                            $(element).data 'bone-view', boneView
                         if bone.log?
                             message = "View: [#{selector}:#{name}]"
                             bone.log message, element, args
