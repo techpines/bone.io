@@ -20,6 +20,7 @@ bone.mount = (selector, templateName, options) ->
     
     if $current.children().length isnt 0
         info = $current.data 'bone-mount'
+        info or= {}
         sameTemplate = info.template is templateName
         sameData = info.data is data
         if sameTemplate and sameData and not refresh

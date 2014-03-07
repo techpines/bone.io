@@ -40,7 +40,6 @@ bone.async = {};
 
 bone.async.eachSeries = function(arr, iterator, callback) {
   var completed, iterate;
-
   callback = callback || function() {};
   if (!arr.length) {
     return callback();
@@ -72,7 +71,6 @@ contextStore = {};
 
 bone.io = function(source, options) {
   var adapter, _ref;
-
   adapter = (_ref = options.config) != null ? _ref.adapter : void 0;
   if (adapter == null) {
     adapter = 'socket.io';
@@ -89,10 +87,9 @@ bone.io.set = function(name, value) {
 adapters = bone.io.adapters = {};
 
 adapters['socket.io'] = function(source, options) {
-  var io, name, route, _base, _base1, _base2, _base3, _fn, _fn1, _i, _len, _ref, _ref1, _ref2, _ref3, _ref4, _ref5, _ref6, _ref7, _ref8;
-
+  var io, name, route, _base, _base1, _base2, _base3, _fn, _fn1, _i, _len, _ref, _ref1;
   io = {};
-  if ((_ref = options.config) == null) {
+  if (options.config == null) {
     options.config = bone.get('io.options');
   }
   io.error = options.error;
@@ -100,26 +97,26 @@ adapters['socket.io'] = function(source, options) {
   io.options = options;
   io.socket = options.config.socket;
   io.inbound = options.inbound;
-  if ((_ref1 = io.inbound) == null) {
+  if (io.inbound == null) {
     io.inbound = {};
   }
   io.outbound = options.outbound;
-  if ((_ref2 = io.outbound) == null) {
+  if (io.outbound == null) {
     io.outbound = {};
   }
-  if ((_ref3 = (_base = io.inbound).middleware) == null) {
+  if ((_base = io.inbound).middleware == null) {
     _base.middleware = [];
   }
-  if ((_ref4 = (_base1 = io.outbound).middleware) == null) {
+  if ((_base1 = io.outbound).middleware == null) {
     _base1.middleware = [];
   }
-  if ((_ref5 = (_base2 = io.outbound).routes) == null) {
+  if ((_base2 = io.outbound).routes == null) {
     _base2.routes = [];
   }
-  if ((_ref6 = (_base3 = io.inbound).routes) == null) {
+  if ((_base3 = io.inbound).routes == null) {
     _base3.routes = [];
   }
-  _ref7 = io.outbound.routes;
+  _ref = io.outbound.routes;
   _fn = function(route) {
     return io[route] = function(data, context) {
       if (context == null) {
@@ -143,15 +140,14 @@ adapters['socket.io'] = function(source, options) {
       });
     };
   };
-  for (_i = 0, _len = _ref7.length; _i < _len; _i++) {
-    route = _ref7[_i];
+  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+    route = _ref[_i];
     _fn(route);
   }
-  _ref8 = io.inbound;
+  _ref1 = io.inbound;
   _fn1 = function(name, route) {
     return io.socket.on("" + source + ":" + name, function(wrapper) {
       var context, data, mid;
-
       data = wrapper.data;
       mid = wrapper.mid;
       if (bone.log != null) {
@@ -176,8 +172,8 @@ adapters['socket.io'] = function(source, options) {
       });
     });
   };
-  for (name in _ref8) {
-    route = _ref8[name];
+  for (name in _ref1) {
+    route = _ref1[name];
     if (name === 'middleware') {
       continue;
     }
@@ -190,7 +186,6 @@ var extend, isExplorer, rootStripper, routeStripper, trailingSlash;
 
 extend = function(obj) {
   var prop, source, _i, _len, _ref;
-
   _ref = Array.prototype.slice.call(arguments, 1);
   for (_i = 0, _len = _ref.length; _i < _len; _i++) {
     source = _ref[_i];
@@ -223,7 +218,6 @@ bone.History = (function() {
 
   History.prototype.getHash = function(window) {
     var match;
-
     match = (window || this).location.href.match(/#(.*)$/);
     if (match) {
       return match[1];
@@ -234,7 +228,6 @@ bone.History = (function() {
 
   History.prototype.getFragment = function(fragment, forcePushState) {
     var root;
-
     if (fragment == null) {
       if (this._hasPushState || !this._wantsHashChange || forcePushState) {
         fragment = this.location.pathname;
@@ -250,9 +243,7 @@ bone.History = (function() {
   };
 
   History.prototype.start = function(options) {
-    var atRoot, docMode, fragment, loc, oldIE,
-      _this = this;
-
+    var atRoot, docMode, fragment, loc, oldIE;
     this.options = extend({}, {
       root: "/"
     }, this.options, options);
@@ -269,13 +260,17 @@ bone.History = (function() {
       this.navigate(fragment);
     }
     if (this._hasPushState) {
-      bone.$(window).on("popstate", function() {
-        return _this.checkUrl.apply(_this, arguments);
-      });
+      bone.$(window).on("popstate", (function(_this) {
+        return function() {
+          return _this.checkUrl.apply(_this, arguments);
+        };
+      })(this));
     } else if (this._wantsHashChange && ("onhashchange" in window) && !oldIE) {
-      bone.$(window).on("hashchange", function() {
-        return _this.checkUrl.apply(_this, arguments);
-      });
+      bone.$(window).on("hashchange", (function(_this) {
+        return function() {
+          return _this.checkUrl.apply(_this, arguments);
+        };
+      })(this));
     } else {
       if (this._wantsHashChange) {
         this._checkUrlInterval = setInterval(this.checkUrl, this.interval);
@@ -306,7 +301,6 @@ bone.History = (function() {
 
   History.prototype.checkUrl = function(e) {
     var current;
-
     current = this.getFragment();
     if (current === this.fragment && this.iframe) {
       current = this.getFragment(this.getHash(this.iframe));
@@ -323,8 +317,7 @@ bone.History = (function() {
   History.prototype.handlers = [];
 
   History.prototype.loadUrl = function(fragmentOverride) {
-    var args, fragment, handler, _base, _i, _len, _ref, _ref1;
-
+    var args, fragment, handler, _base, _i, _len, _ref;
     fragment = this.fragment = this.getFragment(fragmentOverride);
     _ref = this.handlers;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -334,7 +327,7 @@ bone.History = (function() {
         if (bone.log != null) {
           bone.log("Route: [" + handler.route + ":" + fragment + "]", args);
         }
-        if ((_ref1 = (_base = handler.router).middleware) == null) {
+        if ((_base = handler.router).middleware == null) {
           _base.middleware = [];
         }
         bone.async.eachSeries(handler.router.middleware, function(callback, next) {
@@ -349,7 +342,6 @@ bone.History = (function() {
 
   History.prototype.navigate = function(fragment, options) {
     var url;
-
     if (!options || options === true) {
       options = {
         trigger: options
@@ -381,7 +373,6 @@ bone.History = (function() {
 
   History.prototype._updateHash = function(location, fragment, replace) {
     var href;
-
     if (replace) {
       href = location.href.replace(/(javascript:|#).*$/, "");
       return location.replace(href + "#" + fragment);
@@ -400,7 +391,6 @@ id = 0;
 
 initView = function(root, view, options) {
   var $root, action, boneView, name, _fn;
-
   $root = $(root);
   boneView = {};
   boneView.id = id += 1;
@@ -417,7 +407,6 @@ initView = function(root, view, options) {
   _fn = function(name, action) {
     return boneView[name] = function() {
       var message;
-
       if (bone.log != null) {
         message = "View: [" + options.selector + ":" + name + "]";
         bone.log(message, boneView.el, arguments);
@@ -444,11 +433,9 @@ initView = function(root, view, options) {
 
 bone.view = function(selector, options) {
   var action, eventSelector, events, functionName, name, view, _fn, _fn1;
-
   view = {};
   view.$ = function(subSelector) {
     var $element, boneId, boneView, boneViews, combinedSelector, element, _i, _len, _ref;
-
     if ('string' === typeof subSelector) {
       combinedSelector = "" + selector + subSelector;
       return bone.view(combinedSelector, options);
@@ -478,7 +465,6 @@ bone.view = function(selector, options) {
   events = options.events;
   _fn = function(eventSelector, functionName) {
     var action, eventName, eventSplitter, fullSelector, match, subSelector;
-
     eventSplitter = /^(\S+)\s*(.*)$/;
     match = eventSelector.match(eventSplitter);
     eventName = match[1];
@@ -491,7 +477,6 @@ bone.view = function(selector, options) {
     return $(function() {
       return $('body').on(eventName, fullSelector, function(event) {
         var boneView, boneViews, element, message;
-
         element = $(event.currentTarget).parents(selector)[0];
         if (element == null) {
           element = event.currentTarget;
@@ -527,7 +512,6 @@ bone.view = function(selector, options) {
   _fn1 = function(name, action) {
     return view[name] = function() {
       var args, element, _i, _len, _ref, _results;
-
       args = arguments;
       _ref = $(selector);
       _results = [];
@@ -535,7 +519,6 @@ bone.view = function(selector, options) {
         element = _ref[_i];
         _results.push((function(element) {
           var boneView, boneViews, message;
-
           boneViews = $(element).data('bone-views');
           if (boneViews == null) {
             boneViews = {};
@@ -574,7 +557,6 @@ var routeToRegex;
 
 routeToRegex = function(route) {
   var escapeRegExp, namedParam, optionalParam, splatParam;
-
   optionalParam = /\((.*?)\)/g;
   namedParam = /(\(\?)?:\w+/g;
   splatParam = /\*\w+/g;
@@ -590,17 +572,15 @@ routeToRegex = function(route) {
 };
 
 bone.router = function(options) {
-  var _base, _ref;
-
-  if ((_ref = (_base = bone.router).handlers) == null) {
+  var _base;
+  if ((_base = bone.router).handlers == null) {
     _base.handlers = [];
   }
   return $(function() {
-    var action, route, _ref1;
-
-    _ref1 = options.routes;
-    for (route in _ref1) {
-      action = _ref1[route];
+    var action, route, _ref;
+    _ref = options.routes;
+    for (route in _ref) {
+      action = _ref[route];
       if (route === 'routes') {
         continue;
       }
@@ -635,7 +615,6 @@ $ = bone.$;
 
 bone.mount = function(selector, templateName, options) {
   var $current, data, info, refresh, sameData, sameTemplate, template, templateString;
-
   if (options == null) {
     options = {};
   }
@@ -653,6 +632,7 @@ bone.mount = function(selector, templateName, options) {
   }
   if ($current.children().length !== 0) {
     info = $current.data('bone-mount');
+    info || (info = {});
     sameTemplate = info.template === templateName;
     sameData = info.data === data;
     if (sameTemplate && sameData && !refresh) {
