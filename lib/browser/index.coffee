@@ -16,7 +16,9 @@ else
 # Set the dom manipulation library, must be jquery
 bone.$ = window.$
 
-# Default logging set to console.log
-if window.console?.log?
-    bone.log = ->
-        console.log.apply console, arguments
+bone.log = undefined
+
+# Default logging set to console.log, also only if it is running on localhost
+if window.console?.log? and window.location.href.indexOf('localhost') isnt -1
+    bone.log = (message) ->
+        console.log message

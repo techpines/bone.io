@@ -12,9 +12,11 @@ if ((typeof module !== "undefined" && module !== null ? module.exports : void 0)
 
 bone.$ = window.$;
 
-if (((_ref = window.console) != null ? _ref.log : void 0) != null) {
-  bone.log = function() {
-    return console.log.apply(console, arguments);
+bone.log = void 0;
+
+if ((((_ref = window.console) != null ? _ref.log : void 0) != null) && window.location.href.indexOf('localhost') !== -1) {
+  bone.log = function(message) {
+    return console.log(message);
   };
 }
 
@@ -338,7 +340,11 @@ bone.History = (function() {
           _base.middleware = [];
         }
         bone.async.eachSeries(handler.router.middleware, function(callback, next) {
-          return callback.apply(handler.router, [fragment, next]);
+          callback.apply({
+            router: handler.router,
+            route: fragment
+          }, []);
+          return next();
         }, function() {
           return handler.callback.apply(handler.router, args);
         });
@@ -653,6 +659,9 @@ bone.mount = function(selector, templateName, options) {
   }
   if ($current.children().length !== 0) {
     info = $current.data('bone-mount');
+    if (info == null) {
+      info = {};
+    }
     sameTemplate = info.template === templateName;
     sameData = info.data === data;
     if (sameTemplate && sameData && !refresh) {

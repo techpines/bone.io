@@ -145,7 +145,8 @@ class bone.History
                 bone.log "Route: [#{handler.route}:#{fragment}]", args
             handler.router.middleware ?= []
             bone.async.eachSeries handler.router.middleware, (callback, next) ->
-                callback.apply handler.router, [fragment, next]
+                callback.apply {router: handler.router, route: fragment}, []
+                next()
             , ->
                 handler.callback.apply handler.router, args
             return true
